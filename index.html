@@ -35,7 +35,27 @@
             border-radius: 16px;
             box-shadow: 0 0 40px rgba(0, 212, 255, 0.2);
             border: 1px solid var(--border);
+            position: relative;
         }
+
+        /* Language Toggle */
+        .lang-switcher {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+        .lang-btn {
+            background: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 10px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        .lang-btn:hover { background: var(--primary); color: #000; }
 
         header { text-align: center; margin-bottom: 25px; }
         .brand-title { 
@@ -64,6 +84,7 @@
             margin: 15px 0; text-align: center;
         }
         .stat-box { background: rgba(0,0,0,0.5); padding: 12px; border-radius: 10px; border: 1px solid var(--border); }
+        .stat-box span { font-size: 9px; opacity: 0.6; display: block; margin-bottom: 3px; }
         .stat-box strong { font-size: 20px; font-family: 'Consolas', monospace; display: block; }
 
         .controls { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 10px; }
@@ -71,7 +92,7 @@
         .btn { 
             width: 100%; padding: 15px; border: none; border-radius: 8px; 
             font-weight: 900; cursor: pointer; text-transform: uppercase; transition: 0.2s; 
-            font-size: 12px; letter-spacing: 1px;
+            font-size: 11px; letter-spacing: 1px;
         }
         .btn-primary { background: linear-gradient(90deg, var(--primary), var(--secondary)); color: #000; }
         .btn-secondary { background: #2e2e4a; color: var(--primary); border: 1px solid var(--primary); }
@@ -93,74 +114,133 @@
 <body>
 
 <div class="container">
+    <div class="lang-switcher">
+        <button id="langBtn" class="lang-btn">ENGLISH</button>
+    </div>
+
     <header>
         <h1 class="brand-title">NOVA JOINER</h1>
         <p class="subtitle">NOVA tool</p>
     </header>
 
     <div class="section">
-        <label>User Tokens</label>
-        <textarea id="tokens" class="masked" placeholder="Token list..."></textarea>
+        <label id="lblTokens">User Tokens (ユーザートークン)</label>
+        <textarea id="tokens" class="masked" placeholder="Paste tokens here..."></textarea>
     </div>
 
     <div class="grid-inputs">
         <div class="section">
-            <label>Invite Code</label>
+            <label id="lblInvite">Invite Code (招待コード)</label>
             <input type="text" id="inviteCode" placeholder="xxxx">
         </div>
         <div class="section">
-            <label>Server ID (For Onboarding)</label>
+            <label id="lblGuild">Server ID (サーバーID)</label>
             <input type="text" id="guildIdInput" placeholder="1234567890">
         </div>
     </div>
 
     <div class="section">
-        <label>Target Message URL (Verify)</label>
-        <input type="text" id="msgUrl" placeholder="https://discord.com/channels/GUILD/CHANNEL/MSG">
+        <label id="lblMsg">Target Message URL (突破用メッセージURL)</label>
+        <input type="text" id="msgUrl" placeholder="https://discord.com/channels/...">
     </div>
 
     <div class="stats-grid">
-        <div class="stat-box"><span>SUCCESS</span><strong id="countSuccess" style="color:var(--success)">0</strong></div>
-        <div class="stat-box"><span>FAILED</span><strong id="countFailed" style="color:var(--danger)">0</strong></div>
-        <div class="stat-box"><span>TOTAL</span><strong id="countTotal">0</strong></div>
+        <div class="stat-box"><span id="lblStatSuccess">SUCCESS</span><strong id="countSuccess" style="color:var(--success)">0</strong></div>
+        <div class="stat-box"><span id="lblStatFailed">FAILED</span><strong id="countFailed" style="color:var(--danger)">0</strong></div>
+        <div class="stat-box"><span id="lblStatTotal">TOTAL</span><strong id="countTotal">0</strong></div>
     </div>
 
     <div class="controls">
         <button id="startBtn" class="btn btn-primary">Join & Full Bypass</button>
-        <button id="bypassBtn" class="btn btn-secondary">Bypass (Onboarding/Msg)</button>
+        <button id="bypassBtn" class="btn btn-secondary">Bypass Only</button>
     </div>
 
     <div class="status-log" id="logArea">
-        <div class="log-entry"><span>[SYSTEM] NOVA online.</span></div>
+        <div class="log-entry"><span id="lblLogReady">[SYSTEM] NOVA online.</span></div>
     </div>
 </div>
 
 <script>
-    const tokensArea = document.getElementById('tokens');
-    const startBtn = document.getElementById('startBtn');
-    const bypassBtn = document.getElementById('bypassBtn');
-    const logArea = document.getElementById('logArea');
+    let currentLang = 'jp';
+    const translations = {
+        en: {
+            tokens: "User Tokens",
+            invite: "Invite Code",
+            guild: "Server ID (For Onboarding)",
+            msg: "Target Message URL (Verify)",
+            statSuccess: "SUCCESS",
+            statFailed: "FAILED",
+            statTotal: "TOTAL",
+            btnJoin: "Join & Full Bypass",
+            btnBypass: "Bypass Only",
+            logReady: "[SYSTEM] NOVA online.",
+            logStartFull: "Starting Full Sequence...",
+            logStartBypass: "Starting Bypass Only Sequence...",
+            logJoinSuccess: "JOIN SUCCESS",
+            logJoinFail: "JOIN FAIL",
+            logOnboard: "ONBOARDING: Skipped",
+            logReact: "REACTION: Mirror OK",
+            logButton: "BUTTON: Executed",
+            logNoInteract: "MSG: No items found",
+            logTerminated: "Sequence terminated."
+        },
+        jp: {
+            tokens: "ユーザートークン (1行に1つ)",
+            invite: "招待コード",
+            guild: "サーバーID (オンボーディング用)",
+            msg: "ターゲットメッセージURL (突破用)",
+            statSuccess: "成功数",
+            statFailed: "失敗数",
+            statTotal: "合計",
+            btnJoin: "参加 ＆ フル突破開始",
+            btnBypass: "突破のみ実行",
+            logReady: "[SYSTEM] NOVA システム待機中...",
+            logStartFull: "フルシーケンスを開始します...",
+            logStartBypass: "突破のみのシーケンスを開始します...",
+            logJoinSuccess: "サーバー参加成功",
+            logJoinFail: "サーバー参加失敗",
+            logOnboard: "オンボーディング突破成功",
+            logReact: "リアクションコピー成功",
+            logButton: "ボタン実行成功",
+            logNoInteract: "メッセージ内に要素が見つかりません",
+            logTerminated: "シーケンスが終了しました。"
+        }
+    };
 
-    function addLog(text, type = '') {
+    function updateLang() {
+        const t = translations[currentLang];
+        document.getElementById('lblTokens').innerText = t.tokens;
+        document.getElementById('lblInvite').innerText = t.invite;
+        document.getElementById('guildIdInput').placeholder = (currentLang === 'en' ? "1234..." : "サーバーID...");
+        document.getElementById('lblGuild').innerText = t.guild;
+        document.getElementById('lblMsg').innerText = t.msg;
+        document.getElementById('lblStatSuccess').innerText = t.statSuccess;
+        document.getElementById('lblStatFailed').innerText = t.statFailed;
+        document.getElementById('lblStatTotal').innerText = t.statTotal;
+        document.getElementById('startBtn').innerText = t.btnJoin;
+        document.getElementById('bypassBtn').innerText = t.btnBypass;
+        document.getElementById('langBtn').innerText = currentLang === 'en' ? '日本語' : 'ENGLISH';
+    }
+
+    document.getElementById('langBtn').addEventListener('click', () => {
+        currentLang = currentLang === 'en' ? 'jp' : 'en';
+        updateLang();
+    });
+
+    // 初期化
+    updateLang();
+
+    const logArea = document.getElementById('logArea');
+    function addLog(key, type = '', num = null) {
+        const text = translations[currentLang][key] || key;
         const div = document.createElement('div');
         div.className = 'log-entry';
         const time = new Date().toLocaleTimeString([], { hour12: false });
-        div.innerHTML = `<span style="color:#444">[${time}]</span> <span class="log-${type}">${text}</span>`;
+        const prefix = num ? `[${num}] ` : '';
+        div.innerHTML = `<span style="color:#444">[${time}]</span> <span class="log-${type}">${prefix}${text}</span>`;
         logArea.prepend(div);
     }
 
-    function resetCounts(total) {
-        document.getElementById('countSuccess').innerText = "0";
-        document.getElementById('countFailed').innerText = "0";
-        document.getElementById('countTotal').innerText = total;
-    }
-
-    function updateCount(id) {
-        const el = document.getElementById(id);
-        el.innerText = parseInt(el.innerText) + 1;
-    }
-
-    // --- オンボーディング突破ロジック ---
     async function bypassOnboarding(t, num, gId) {
         if (!gId) return;
         try {
@@ -169,11 +249,10 @@
                 headers: { 'Authorization': t, 'Content-Type': 'application/json' },
                 body: JSON.stringify({ onboarding_responses: [], onboarding_prompts_seen: {}, onboarding_responses_seen: {} })
             });
-            addLog(`[${num}] ONBOARDING: Skipped`, 'success');
-        } catch (e) { addLog(`[${num}] ONBOARDING: Fail`, 'error'); }
+            addLog('logOnboard', 'success', num);
+        } catch (e) {}
     }
 
-    // --- メッセージ突破 (リアクション/ボタン) ---
     async function processInteraction(t, num, guildId, channelId, msgId) {
         if (!channelId || !msgId) return;
         try {
@@ -191,7 +270,7 @@
                             method: 'PUT', headers: { 'Authorization': t }
                         });
                     }
-                    addLog(`[${num}] REACTION: Mirror OK`, 'success');
+                    addLog('logReact', 'success', num);
                 }
                 const components = msgData.components || [];
                 const buttons = [];
@@ -208,58 +287,61 @@
                             })
                         });
                     }
-                    addLog(`[${num}] BUTTON: Executed`, 'success');
+                    addLog('logButton', 'success', num);
                 }
-                if (!acted) addLog(`[${num}] MSG: No items found`, 'warn');
+                if (!acted) addLog('logNoInteract', 'warn', num);
             }
-        } catch (e) { addLog(`[${num}] INTERACTION ERROR`, 'error'); }
+        } catch (e) {}
     }
 
-    // --- モード1: Join & Full ---
-    startBtn.addEventListener('click', async () => {
-        const rawTokens = tokensArea.value.split(/\r?\n/).filter(t => t.trim() !== "");
+    function resetCounts(total) {
+        document.getElementById('countSuccess').innerText = "0";
+        document.getElementById('countFailed').innerText = "0";
+        document.getElementById('countTotal').innerText = total;
+    }
+
+    document.getElementById('startBtn').addEventListener('click', async () => {
+        const rawTokens = document.getElementById('tokens').value.split(/\r?\n/).filter(t => t.trim() !== "");
         const inviteCode = document.getElementById('inviteCode').value.trim().split('/').pop();
         const gId = document.getElementById('guildIdInput').value.trim();
         const msgUrl = document.getElementById('msgUrl').value.trim();
-
-        if (!rawTokens.length || !inviteCode) return alert("Missing data");
+        if (!rawTokens.length || !inviteCode) return alert("Error");
         resetCounts(rawTokens.length);
-        
         let parts = msgUrl.split('/');
         let mGId = parts[parts.length - 3], mCId = parts[parts.length - 2], mMsgId = parts[parts.length - 1];
-
+        addLog('logStartFull', 'info');
         await Promise.all(rawTokens.map(async (token, i) => {
-            const t = token.trim();
-            const num = i + 1;
+            const t = token.trim(); const num = i + 1;
             const res = await fetch(`https://discord.com/api/v9/invites/${inviteCode}`, { method: 'POST', headers: { 'Authorization': t } });
             if (res.ok) {
-                updateCount('countSuccess');
-                addLog(`[${num}] JOIN SUCCESS`, 'success');
+                document.getElementById('countSuccess').innerText = parseInt(document.getElementById('countSuccess').innerText) + 1;
+                addLog('logJoinSuccess', 'success', num);
                 if (gId) await bypassOnboarding(t, num, gId);
                 await processInteraction(t, num, mGId, mCId, mMsgId);
-            } else { updateCount('countFailed'); addLog(`[${num}] JOIN FAIL`, 'error'); }
+            } else {
+                document.getElementById('countFailed').innerText = parseInt(document.getElementById('countFailed').innerText) + 1;
+                addLog('logJoinFail', 'error', num);
+            }
         }));
+        addLog('logTerminated', 'warn');
     });
 
-    // --- モード2: Bypass Only ---
-    bypassBtn.addEventListener('click', async () => {
-        const rawTokens = tokensArea.value.split(/\r?\n/).filter(t => t.trim() !== "");
+    document.getElementById('bypassBtn').addEventListener('click', async () => {
+        const rawTokens = document.getElementById('tokens').value.split(/\r?\n/).filter(t => t.trim() !== "");
         const gId = document.getElementById('guildIdInput').value.trim();
         const msgUrl = document.getElementById('msgUrl').value.trim();
-
         if (!rawTokens.length) return;
         resetCounts(rawTokens.length);
-
         let parts = msgUrl.split('/');
         let mGId = parts[parts.length - 3], mCId = parts[parts.length - 2], mMsgId = parts[parts.length - 1];
-
+        addLog('logStartBypass', 'info');
         await Promise.all(rawTokens.map(async (token, i) => {
-            const t = token.trim();
-            const num = i + 1;
+            const t = token.trim(); const num = i + 1;
             if (gId) await bypassOnboarding(t, num, gId);
             if (mCId && mMsgId) await processInteraction(t, num, mGId, mCId, mMsgId);
-            updateCount('countSuccess');
+            document.getElementById('countSuccess').innerText = parseInt(document.getElementById('countSuccess').innerText) + 1;
         }));
+        addLog('logTerminated', 'warn');
     });
 </script>
 
