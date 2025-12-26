@@ -3,21 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CIEL - Discord Guild Joiner</title>
+    <title>NOVA MULTI-JOINER</title>
     <style>
         :root {
             --bg-color: #0d0d15;
             --card-bg: #1a1a2e;
             --text-color: #f0f0f5;
-            --primary: #00d4ff; /* Cyber Blue */
-            --secondary: #7000ff; /* Purple */
+            --primary: #00d4ff;
+            --secondary: #7000ff;
             --danger: #ff0055;
             --success: #00ffa3;
+            --warning: #ffa500;
             --border: #2e2e4a;
         }
 
         body {
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
             display: flex;
@@ -28,259 +29,209 @@
 
         .container {
             width: 100%;
-            max-width: 500px;
+            max-width: 550px;
             background: var(--card-bg);
             padding: 30px;
             border-radius: 16px;
-            box-shadow: 0 0 30px rgba(0, 212, 255, 0.1);
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.15);
             border: 1px solid var(--border);
         }
 
         header { text-align: center; margin-bottom: 30px; }
         .brand-title { 
-            margin: 0; 
-            font-size: 32px; 
-            font-weight: 900; 
-            letter-spacing: 4px; 
-            color: var(--primary); 
-            text-shadow: 0 0 15px rgba(0, 212, 255, 0.5);
+            margin: 0; font-size: 32px; font-weight: 900; letter-spacing: 5px; 
+            color: var(--primary); text-shadow: 0 0 15px rgba(0, 212, 255, 0.5);
+            text-transform: uppercase;
         }
-        .subtitle { font-size: 11px; text-transform: uppercase; opacity: 0.6; margin-top: 5px; letter-spacing: 1px; }
+        .subtitle { font-size: 11px; text-transform: uppercase; opacity: 0.6; letter-spacing: 2px; margin-top: 5px; }
 
         .section { margin-bottom: 20px; }
         label { display: block; font-size: 11px; margin-bottom: 8px; color: var(--primary); font-weight: bold; text-transform: uppercase; }
 
-        input[type="text"],
-        input[type="password"],
-        textarea {
-            width: 100%; 
-            padding: 12px; 
-            background: #0a0a1a; 
-            border: 1px solid var(--border);
-            border-radius: 8px; 
-            color: white; 
-            box-sizing: border-box; 
-            outline: none; 
-            font-family: 'Consolas', monospace;
-            transition: border 0.3s, box-shadow 0.3s;
+        textarea, input[type="text"] {
+            width: 100%; padding: 12px; background: #0a0a1a; border: 1px solid var(--border);
+            border-radius: 8px; color: white; box-sizing: border-box; outline: none;
+            font-family: 'Consolas', monospace; transition: 0.3s;
         }
 
-        input:focus, textarea:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 8px rgba(0, 212, 255, 0.2);
-        }
+        textarea { height: 120px; resize: vertical; }
+        textarea.masked { -webkit-text-security: disc !important; }
+        
+        input:focus, textarea:focus { border-color: var(--primary); box-shadow: 0 0 8px rgba(0, 212, 255, 0.2); }
 
-        .view-toggle { 
-            font-size: 11px; 
-            color: var(--primary); 
-            cursor: pointer; 
-            text-align: right; 
-            margin-top: 5px; 
-            text-decoration: none; 
-            opacity: 0.7;
+        .view-toggle { font-size: 11px; color: var(--primary); cursor: pointer; text-align: right; margin-top: 5px; opacity: 0.7; user-select: none; }
+        .view-toggle:hover { opacity: 1; text-decoration: underline; }
+
+        .stats-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+            margin-bottom: 20px; text-align: center; font-family: 'Consolas', monospace;
         }
-        .view-toggle:hover { opacity: 1; }
+        .stat-box { background: rgba(0,0,0,0.4); padding: 12px; border-radius: 8px; border: 1px solid var(--border); }
+        .stat-box span { display: block; font-size: 10px; opacity: 0.7; margin-bottom: 5px; }
+        .stat-box strong { font-size: 20px; }
 
         .btn { 
-            width: 100%; 
-            padding: 16px; 
-            border: none; 
-            border-radius: 8px; 
-            font-weight: bold; 
-            cursor: pointer; 
-            text-transform: uppercase; 
-            transition: 0.3s; 
-            letter-spacing: 1px;
-            margin-top: 10px;
+            width: 100%; padding: 18px; border: none; border-radius: 8px; 
+            font-weight: bold; cursor: pointer; text-transform: uppercase; transition: 0.3s; 
+            letter-spacing: 1px; font-size: 14px;
         }
-        .btn-primary { 
-            background: linear-gradient(45deg, var(--primary), var(--secondary)); 
-            color: #000; 
-        }
-        .btn-primary:hover { 
-            filter: brightness(1.2);
-            transform: translateY(-1px);
-            box-shadow: 0 5px 15px rgba(0, 212, 255, 0.3);
-        }
-        .btn-primary:disabled { 
-            background: #2e2e4a; 
-            color: #666; 
-            cursor: not-allowed; 
-            transform: none;
-        }
+        .btn-primary { background: linear-gradient(45deg, var(--primary), var(--secondary)); color: #000; }
+        .btn-primary:hover { filter: brightness(1.2); box-shadow: 0 5px 20px rgba(0, 212, 255, 0.4); transform: translateY(-1px); }
+        .btn-primary:active { transform: translateY(0); }
+        .btn-primary:disabled { background: #2e2e4a; color: #666; cursor: not-allowed; box-shadow: none; transform: none; }
 
-        /* 進行状況の表示エリア */
         .status-log {
-            margin-top: 20px;
-            background: #0a0a1a;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            height: 120px;
-            overflow-y: auto;
-            padding: 10px;
-            font-size: 12px;
-            font-family: 'Consolas', monospace;
+            margin-top: 25px; background: #0a0a1a; border: 1px solid var(--border);
+            border-radius: 8px; height: 160px; overflow-y: auto; padding: 12px;
+            font-size: 11px; font-family: 'Consolas', monospace; line-height: 1.5;
         }
-
-        .log-entry { margin-bottom: 4px; display: flex; justify-content: space-between; }
+        .log-entry { margin-bottom: 5px; border-bottom: 1px solid rgba(255,255,255,0.03); padding-bottom: 3px; display: flex; gap: 10px; }
+        .log-time { color: #555; min-width: 65px; }
         .log-success { color: var(--success); }
         .log-error { color: var(--danger); }
+        .log-warn { color: var(--warning); }
         .log-info { color: var(--primary); }
 
-        .advanced-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-top: 10px;
-        }
-
-        .checkbox-group {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 12px;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-
-        .checkbox-group input { cursor: pointer; }
-
-        /* スクロールバーのカスタマイズ */
-        ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-track { background: var(--bg-color); }
+        .advanced-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px; }
+        
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
     </style>
 </head>
 <body>
 
 <div class="container">
     <header>
-        <h1 class="brand-title">CIEL JOINER</h1>
-        <p class="subtitle">Premium Guild Utility</p>
+        <h1 class="brand-title">NOVA JOINER</h1>
+        <p class="subtitle">Next-Gen Multi-Token Automator</p>
     </header>
 
     <div class="section">
-        <label>User Token</label>
-        <input type="password" id="token" placeholder="Paste your token here...">
-        <div id="toggleBtn" class="view-toggle">Show Token</div>
+        <label>User Tokens (One per line)</label>
+        <textarea id="tokens" class="masked" placeholder="Paste your tokens here..."></textarea>
+        <div id="toggleBtn" class="view-toggle">SHOW TOKENS</div>
     </div>
 
     <div class="section">
         <label>Invite Code / URL</label>
-        <input type="text" id="inviteCode" placeholder="discord.gg/xxxx">
+        <input type="text" id="inviteCode" placeholder="https://discord.gg/xxxx">
     </div>
 
-    <button id="startBtn" class="btn btn-primary">Join 開始</button>
+    <div class="stats-grid">
+        <div class="stat-box"><span>SUCCESS</span><strong id="countSuccess" style="color:var(--success)">0</strong></div>
+        <div class="stat-box"><span>FAILED</span><strong id="countFailed" style="color:var(--danger)">0</strong></div>
+        <div class="stat-box"><span>LEFT</span><strong id="countLeft">0</strong></div>
+    </div>
+
+    <button id="startBtn" class="btn btn-primary">Start Multi-Join</button>
 
     <div class="status-log" id="logArea">
-        <div class="log-entry log-info">> Ready to work...</div>
+        <div class="log-entry"><span class="log-time">[SYSTEM]</span><span class="log-info">Awaiting commands...</span></div>
     </div>
 
-    <div class="section" style="margin-top: 25px; border-top: 1px solid var(--border); padding-top: 20px;">
-        <label style="opacity: 0.5;">Advanced Options</label>
-        
+    <div class="section" style="margin-top: 30px; border-top: 1px solid var(--border); padding-top: 20px;">
+        <label style="opacity: 0.5;">Advanced Configuration</label>
         <div class="advanced-grid">
             <div>
-                <label>Nickname</label>
-                <input type="text" id="nickname" placeholder="Display name">
+                <label>Set Nickname</label>
+                <input type="text" id="nickname" placeholder="Global display name">
             </div>
             <div>
-                <label>Bio Message</label>
-                <input type="text" id="bio" placeholder="Profile message">
+                <label>Delay (ms)</label>
+                <input type="text" id="delay" value="1500" placeholder="1500">
             </div>
-        </div>
-
-        <div style="display: flex; gap: 20px;">
-            <label class="checkbox-group">
-                <input type="checkbox" id="boost"> Boost Server
-            </label>
-            <label class="checkbox-group">
-                <input type="checkbox" id="report"> Report Guild
-            </label>
-        </div>
-
-        <div style="margin-top: 15px;">
-            <label>Reaction Message URL</label>
-            <input type="text" id="msgUrl" placeholder="https://discord.com/channels/...">
         </div>
     </div>
 </div>
 
 <script>
-    const tokenInput = document.getElementById('token');
+    const tokensArea = document.getElementById('tokens');
     const toggleBtn = document.getElementById('toggleBtn');
     const startBtn = document.getElementById('startBtn');
     const logArea = document.getElementById('logArea');
 
-    // ログ出力関数
     function addLog(text, type = 'info') {
         const div = document.createElement('div');
-        div.className = `log-entry log-${type}`;
+        div.className = 'log-entry';
         const time = new Date().toLocaleTimeString([], { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
-        div.innerHTML = `<span>[${time}] ${text}</span>`;
+        div.innerHTML = `<span class="log-time">[${time}]</span><span class="log-${type}">${text}</span>`;
         logArea.prepend(div);
     }
 
-    // 表示切り替え
     toggleBtn.addEventListener('click', () => {
-        if (tokenInput.type === 'password') {
-            tokenInput.type = 'text';
-            toggleBtn.innerText = "Hide Token";
-        } else {
-            tokenInput.type = 'password';
-            toggleBtn.innerText = "Show Token";
-        }
+        const isMasked = tokensArea.classList.toggle('masked');
+        toggleBtn.innerText = isMasked ? "SHOW TOKENS" : "HIDE TOKENS";
     });
 
-    // メインロジック
     startBtn.addEventListener('click', async () => {
-        const token = tokenInput.value.trim();
+        const rawTokens = tokensArea.value.split(/\r?\n/).filter(t => t.trim() !== "");
         const inviteInput = document.getElementById('inviteCode').value.trim();
         const nickname = document.getElementById('nickname').value.trim();
+        const delay = parseInt(document.getElementById('delay').value) || 1500;
 
-        if (!token || !inviteInput) {
-            addLog("Error: Missing credentials", "error");
+        if (rawTokens.length === 0 || !inviteInput) {
+            addLog("Error: Missing tokens or invite code", "error");
             return;
         }
 
-        const code = inviteInput.split('/').pop();
-
+        const inviteCode = inviteInput.includes('/') ? inviteInput.split('/').pop() : inviteInput;
         startBtn.disabled = true;
-        addLog(`Attempting to join: ${code}`, "info");
+        
+        let successCount = 0;
+        let failedCount = 0;
+        document.getElementById('countLeft').innerText = rawTokens.length;
 
-        try {
-            // 1. Join Request
-            const response = await fetch(`https://discord.com/api/v9/invites/${code}`, {
-                method: 'POST',
-                headers: { 'Authorization': token }
-            });
+        addLog(`Initiating NOVA sequence for ${rawTokens.length} tokens...`, 'warn');
 
-            const data = await response.json();
+        for (let i = 0; i < rawTokens.length; i++) {
+            const token = rawTokens[i].trim();
+            const currentNum = i + 1;
 
-            if (response.ok) {
-                addLog(`Success: Joined ${data.guild.name}`, "success");
+            try {
+                // Discord Join Request
+                const response = await fetch(`https://discord.com/api/v9/invites/${inviteCode}`, {
+                    method: 'POST',
+                    headers: { 'Authorization': token, 'Content-Type': 'application/json' }
+                });
 
-                // 2. Nickname Change (Optional)
-                if (nickname) {
-                    const nickRes = await fetch(`https://discord.com/api/v9/guilds/${data.guild.id}/members/@me`, {
-                        method: 'PATCH',
-                        headers: {
-                            'Authorization': token,
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ nick: nickname })
-                    });
-                    if (nickRes.ok) addLog("Nickname updated", "success");
+                const data = await response.json();
+
+                if (response.ok) {
+                    addLog(`[${currentNum}] Joined: ${data.guild.name}`, 'success');
+                    successCount++;
+                    
+                    // Optional Nickname Change
+                    if (nickname) {
+                        await fetch(`https://discord.com/api/v9/guilds/${data.guild.id}/members/@me`, {
+                            method: 'PATCH',
+                            headers: { 'Authorization': token, 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ nick: nickname })
+                        });
+                    }
+                } else {
+                    addLog(`[${currentNum}] Failed: ${data.message || 'Unauthorized'}`, 'error');
+                    failedCount++;
                 }
-
-            } else {
-                addLog(`Failed: ${data.message || 'Unknown error'}`, "error");
+            } catch (err) {
+                addLog(`[${currentNum}] Network Error (CORS?)`, 'error');
+                failedCount++;
             }
-        } catch (err) {
-            addLog("Network Error: Check CORS settings", "error");
-        } finally {
-            startBtn.disabled = false;
+
+            // Update UI
+            document.getElementById('countSuccess').innerText = successCount;
+            document.getElementById('countFailed').innerText = failedCount;
+            document.getElementById('countLeft').innerText = rawTokens.length - currentNum;
+
+            // Rate Limit Prevention Delay
+            if (i < rawTokens.length - 1) {
+                await new Promise(r => setTimeout(r, delay));
+            }
         }
+
+        addLog("Sequence completed.", "warn");
+        startBtn.disabled = false;
     });
 </script>
 
