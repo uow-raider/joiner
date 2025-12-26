@@ -23,13 +23,13 @@
             color: var(--text-color);
             display: flex;
             justify-content: center;
-            padding: 40px 20px;
+            padding: 20px;
             margin: 0;
         }
 
         .container {
             width: 100%;
-            max-width: 650px;
+            max-width: 700px;
             background: var(--card-bg);
             padding: 30px;
             border-radius: 16px;
@@ -37,7 +37,7 @@
             border: 1px solid var(--border);
         }
 
-        header { text-align: center; margin-bottom: 30px; }
+        header { text-align: center; margin-bottom: 25px; }
         .brand-title { 
             margin: 0; font-size: 36px; font-weight: 900; letter-spacing: 6px; 
             color: var(--primary); text-shadow: 0 0 20px rgba(0, 212, 255, 0.6);
@@ -45,32 +45,33 @@
         }
         .subtitle { font-size: 12px; text-transform: uppercase; opacity: 0.7; letter-spacing: 4px; font-weight: bold; }
 
-        .section { margin-bottom: 20px; }
-        label { display: block; font-size: 11px; margin-bottom: 8px; color: var(--primary); font-weight: bold; text-transform: uppercase; }
+        .section { margin-bottom: 15px; }
+        label { display: block; font-size: 10px; margin-bottom: 5px; color: var(--primary); font-weight: bold; text-transform: uppercase; }
 
         textarea, input[type="text"] {
-            width: 100%; padding: 12px; background: #050510; border: 1px solid var(--border);
+            width: 100%; padding: 10px; background: #050510; border: 1px solid var(--border);
             border-radius: 8px; color: white; box-sizing: border-box; outline: none;
-            font-family: 'Consolas', monospace; transition: 0.3s;
+            font-family: 'Consolas', monospace; transition: 0.3s; font-size: 13px;
         }
 
-        textarea { height: 100px; }
+        textarea { height: 80px; }
         textarea.masked { -webkit-text-security: disc !important; }
         
+        .grid-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+
         .stats-grid {
             display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
-            margin: 20px 0; text-align: center;
+            margin: 15px 0; text-align: center;
         }
-        .stat-box { background: rgba(0,0,0,0.5); padding: 15px; border-radius: 10px; border: 1px solid var(--border); }
-        .stat-box span { display: block; font-size: 10px; opacity: 0.6; }
-        .stat-box strong { font-size: 24px; font-family: 'Consolas', monospace; }
+        .stat-box { background: rgba(0,0,0,0.5); padding: 12px; border-radius: 10px; border: 1px solid var(--border); }
+        .stat-box strong { font-size: 20px; font-family: 'Consolas', monospace; display: block; }
 
         .controls { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 10px; }
 
         .btn { 
-            width: 100%; padding: 18px; border: none; border-radius: 8px; 
+            width: 100%; padding: 15px; border: none; border-radius: 8px; 
             font-weight: 900; cursor: pointer; text-transform: uppercase; transition: 0.2s; 
-            font-size: 13px; letter-spacing: 1px;
+            font-size: 12px; letter-spacing: 1px;
         }
         .btn-primary { background: linear-gradient(90deg, var(--primary), var(--secondary)); color: #000; }
         .btn-secondary { background: #2e2e4a; color: var(--primary); border: 1px solid var(--primary); }
@@ -79,15 +80,14 @@
         .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
         .status-log {
-            margin-top: 25px; background: #050510; border: 1px solid var(--border);
-            border-radius: 8px; height: 280px; overflow-y: auto; padding: 15px;
+            margin-top: 20px; background: #050510; border: 1px solid var(--border);
+            border-radius: 8px; height: 220px; overflow-y: auto; padding: 12px;
             font-size: 11px; font-family: 'Consolas', monospace;
         }
-        .log-entry { margin-bottom: 6px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 4px; }
-        .log-success { color: var(--success); font-weight: bold; }
+        .log-entry { margin-bottom: 4px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 2px; }
+        .log-success { color: var(--success); }
         .log-error { color: var(--danger); }
         .log-warn { color: var(--warning); }
-        .log-info { color: var(--primary); }
     </style>
 </head>
 <body>
@@ -103,14 +103,20 @@
         <textarea id="tokens" class="masked" placeholder="Token list..."></textarea>
     </div>
 
-    <div class="section">
-        <label>Invite Code (Optional for Bypass Mode)</label>
-        <input type="text" id="inviteCode" placeholder="xxxx">
+    <div class="grid-inputs">
+        <div class="section">
+            <label>Invite Code</label>
+            <input type="text" id="inviteCode" placeholder="xxxx">
+        </div>
+        <div class="section">
+            <label>Server ID (For Onboarding)</label>
+            <input type="text" id="guildIdInput" placeholder="1234567890">
+        </div>
     </div>
 
     <div class="section">
-        <label>Target Message URL (Verify Message)</label>
-        <input type="text" id="msgUrl" placeholder="https://discord.com/channels/SERVER_ID/CHANNEL_ID/MSG_ID">
+        <label>Target Message URL (Verify)</label>
+        <input type="text" id="msgUrl" placeholder="https://discord.com/channels/GUILD/CHANNEL/MSG">
     </div>
 
     <div class="stats-grid">
@@ -120,12 +126,12 @@
     </div>
 
     <div class="controls">
-        <button id="startBtn" class="btn btn-primary">Join & Bypass</button>
-        <button id="bypassBtn" class="btn btn-secondary">Bypass Only</button>
+        <button id="startBtn" class="btn btn-primary">Join & Full Bypass</button>
+        <button id="bypassBtn" class="btn btn-secondary">Bypass (Onboarding/Msg)</button>
     </div>
 
     <div class="status-log" id="logArea">
-        <div class="log-entry"><span>[SYSTEM] NOVA system ready.</span></div>
+        <div class="log-entry"><span>[SYSTEM] NOVA online.</span></div>
     </div>
 </div>
 
@@ -154,20 +160,30 @@
         el.innerText = parseInt(el.innerText) + 1;
     }
 
+    // --- オンボーディング突破ロジック ---
+    async function bypassOnboarding(t, num, gId) {
+        if (!gId) return;
+        try {
+            await fetch(`https://discord.com/api/v9/guilds/${gId}/onboarding-responses`, {
+                method: 'POST',
+                headers: { 'Authorization': t, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ onboarding_responses: [], onboarding_prompts_seen: {}, onboarding_responses_seen: {} })
+            });
+            addLog(`[${num}] ONBOARDING: Skipped`, 'success');
+        } catch (e) { addLog(`[${num}] ONBOARDING: Fail`, 'error'); }
+    }
+
+    // --- メッセージ突破 (リアクション/ボタン) ---
     async function processInteraction(t, num, guildId, channelId, msgId) {
         if (!channelId || !msgId) return;
-
         try {
             const msgRes = await fetch(`https://discord.com/api/v9/channels/${channelId}/messages/${msgId}`, {
                 headers: { 'Authorization': t }
             });
-
             if (msgRes.ok) {
                 const msgData = await msgRes.json();
                 let acted = false;
-
-                // Priority 1: Reactions
-                if (msgData.reactions && msgData.reactions.length > 0) {
+                if (msgData.reactions?.length > 0) {
                     acted = true;
                     for (const r of msgData.reactions) {
                         const emoji = r.emoji.id ? `${r.emoji.name}:${r.emoji.id}` : encodeURIComponent(r.emoji.name);
@@ -175,16 +191,11 @@
                             method: 'PUT', headers: { 'Authorization': t }
                         });
                     }
-                    addLog(`[${num}] REACTION MIRROR: OK`, 'success');
+                    addLog(`[${num}] REACTION: Mirror OK`, 'success');
                 }
-
-                // Priority 2: Buttons
                 const components = msgData.components || [];
                 const buttons = [];
-                components.forEach(row => {
-                    row.components.forEach(comp => { if (comp.type === 2) buttons.push(comp); });
-                });
-
+                components.forEach(row => row.components.forEach(comp => { if (comp.type === 2) buttons.push(comp); }));
                 if (buttons.length > 0) {
                     acted = true;
                     for (const btn of buttons) {
@@ -192,86 +203,63 @@
                             method: 'POST',
                             headers: { 'Authorization': t, 'Content-Type': 'application/json' },
                             body: JSON.stringify({
-                                type: 3,
-                                guild_id: guildId,
-                                channel_id: channelId,
-                                message_id: msgId,
-                                application_id: msgData.author.id,
-                                data: { component_type: 2, custom_id: btn.custom_id }
+                                type: 3, guild_id: guildId, channel_id: channelId, message_id: msgId,
+                                application_id: msgData.author.id, data: { component_type: 2, custom_id: btn.custom_id }
                             })
                         });
                     }
-                    addLog(`[${num}] BUTTON EXECUTED: OK`, 'success');
+                    addLog(`[${num}] BUTTON: Executed`, 'success');
                 }
-
-                if (!acted) addLog(`[${num}] ERROR: No interactive elements found`, 'error');
-            } else {
-                addLog(`[${num}] ERROR: Verification message unreachable`, 'error');
+                if (!acted) addLog(`[${num}] MSG: No items found`, 'warn');
             }
-        } catch (e) {
-            addLog(`[${num}] INTERACTION ERROR`, 'error');
-        }
+        } catch (e) { addLog(`[${num}] INTERACTION ERROR`, 'error'); }
     }
 
-    // --- Join & Bypass Sequence ---
+    // --- モード1: Join & Full ---
     startBtn.addEventListener('click', async () => {
         const rawTokens = tokensArea.value.split(/\r?\n/).filter(t => t.trim() !== "");
-        const inviteInput = document.getElementById('inviteCode').value.trim();
+        const inviteCode = document.getElementById('inviteCode').value.trim().split('/').pop();
+        const gId = document.getElementById('guildIdInput').value.trim();
         const msgUrl = document.getElementById('msgUrl').value.trim();
 
-        if (rawTokens.length === 0 || !inviteInput) return alert("Required data missing");
-
-        const inviteCode = inviteInput.split('/').pop();
-        startBtn.disabled = true; bypassBtn.disabled = true;
+        if (!rawTokens.length || !inviteCode) return alert("Missing data");
         resetCounts(rawTokens.length);
-
+        
         let parts = msgUrl.split('/');
-        let guildId = parts[parts.length - 3], channelId = parts[parts.length - 2], msgId = parts[parts.length - 1];
-
-        addLog(`Starting Full Sequence...`, 'info');
+        let mGId = parts[parts.length - 3], mCId = parts[parts.length - 2], mMsgId = parts[parts.length - 1];
 
         await Promise.all(rawTokens.map(async (token, i) => {
             const t = token.trim();
-            try {
-                const joinRes = await fetch(`https://discord.com/api/v9/invites/${inviteCode}`, {
-                    method: 'POST', headers: { 'Authorization': t }
-                });
-
-                if (joinRes.ok) {
-                    updateCount('countSuccess');
-                    addLog(`[${i+1}] JOIN SUCCESS`, 'success');
-                    await processInteraction(t, i+1, guildId, channelId, msgId);
-                } else {
-                    addLog(`[${i+1}] JOIN FAIL`, 'error');
-                    updateCount('countFailed');
-                }
-            } catch (e) { updateCount('countFailed'); }
+            const num = i + 1;
+            const res = await fetch(`https://discord.com/api/v9/invites/${inviteCode}`, { method: 'POST', headers: { 'Authorization': t } });
+            if (res.ok) {
+                updateCount('countSuccess');
+                addLog(`[${num}] JOIN SUCCESS`, 'success');
+                if (gId) await bypassOnboarding(t, num, gId);
+                await processInteraction(t, num, mGId, mCId, mMsgId);
+            } else { updateCount('countFailed'); addLog(`[${num}] JOIN FAIL`, 'error'); }
         }));
-        startBtn.disabled = false; bypassBtn.disabled = false;
     });
 
-    // --- Bypass Only Sequence ---
+    // --- モード2: Bypass Only ---
     bypassBtn.addEventListener('click', async () => {
         const rawTokens = tokensArea.value.split(/\r?\n/).filter(t => t.trim() !== "");
+        const gId = document.getElementById('guildIdInput').value.trim();
         const msgUrl = document.getElementById('msgUrl').value.trim();
 
-        if (rawTokens.length === 0 || !msgUrl) return alert("Tokens and Message URL required");
-
-        bypassBtn.disabled = true; startBtn.disabled = true;
+        if (!rawTokens.length) return;
         resetCounts(rawTokens.length);
 
         let parts = msgUrl.split('/');
-        let guildId = parts[parts.length - 3], channelId = parts[parts.length - 2], msgId = parts[parts.length - 1];
-
-        addLog(`Starting Bypass Only Sequence...`, 'warn');
+        let mGId = parts[parts.length - 3], mCId = parts[parts.length - 2], mMsgId = parts[parts.length - 1];
 
         await Promise.all(rawTokens.map(async (token, i) => {
             const t = token.trim();
-            await processInteraction(t, i+1, guildId, channelId, msgId);
-            updateCount('countSuccess'); // Bypass試行を成功カウントとして扱う
+            const num = i + 1;
+            if (gId) await bypassOnboarding(t, num, gId);
+            if (mCId && mMsgId) await processInteraction(t, num, mGId, mCId, mMsgId);
+            updateCount('countSuccess');
         }));
-
-        bypassBtn.disabled = false; startBtn.disabled = false;
     });
 </script>
 
