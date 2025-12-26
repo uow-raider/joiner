@@ -3,130 +3,114 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NOVA TOOL - 究極安定版</title>
+    <title>NOVA tool</title>
     <script src="https://js.hcaptcha.com/1/api.js?onload=onCaptchaLoad&render=explicit" async defer></script>
     <style>
-        :root { --bg-color: #0b0b12; --card-bg: #151525; --text-color: #e0e0e8; --primary: #00d4ff; --secondary: #7000ff; --danger: #ff0055; --success: #00ffa3; --warning: #ffaa00; --border: #2a2a40; }
-        body { font-family: 'Helvetica Neue', Arial, sans-serif; background-color: var(--bg-color); color: var(--text-color); display: flex; justify-content: center; padding: 20px; margin: 0; }
-        .container { width: 100%; max-width: 850px; background: var(--card-bg); padding: 30px; border-radius: 20px; box-shadow: 0 0 50px rgba(0, 0, 0, 0.5); border: 1px solid var(--border); }
-        header { text-align: center; margin-bottom: 25px; }
-        .brand-title { margin: 0; font-size: 32px; font-weight: 900; letter-spacing: 6px; color: var(--primary); text-transform: uppercase; }
-        .label-text { display: block; font-size: 11px; margin-bottom: 6px; color: var(--primary); font-weight: 800; text-transform: uppercase; }
-        textarea, input[type="text"] { width: 100%; padding: 12px; background: #080814; border: 1px solid var(--border); border-radius: 10px; color: white; box-sizing: border-box; outline: none; font-family: 'Consolas', monospace; font-size: 13px; margin-bottom: 15px; }
-        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
-        #captcha-container { margin: 20px 0; display: none; flex-direction: column; align-items: center; background: rgba(0, 212, 255, 0.05); padding: 20px; border-radius: 15px; border: 2px dashed var(--primary); }
+        :root { --bg: #0b0b12; --card: #151525; --primary: #00d4ff; --border: #2a2a40; --text: #e0e0e8; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); display: flex; justify-content: center; padding: 20px; margin: 0; }
+        .container { width: 100%; max-width: 800px; background: var(--card); padding: 30px; border-radius: 8px; border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        header { text-align: center; margin-bottom: 25px; border-bottom: 1px solid var(--border); padding-bottom: 15px; }
+        h1 { margin: 0; font-size: 24px; font-weight: 800; letter-spacing: 3px; color: var(--primary); text-transform: uppercase; }
+        .label { display: block; font-size: 11px; margin-bottom: 5px; color: var(--primary); font-weight: bold; }
+        textarea, input { width: 100%; padding: 12px; background: #080814; border: 1px solid var(--border); border-radius: 4px; color: #fff; box-sizing: border-box; outline: none; font-family: 'Consolas', monospace; font-size: 13px; margin-bottom: 15px; }
+        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+        #captcha-container { margin: 15px 0; display: none; flex-direction: column; align-items: center; background: rgba(0, 212, 255, 0.05); padding: 20px; border-radius: 4px; border: 1px dashed var(--primary); }
         .btn-group { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .btn { padding: 16px; border: none; border-radius: 8px; font-weight: 900; cursor: pointer; text-transform: uppercase; transition: 0.3s; }
-        .btn-primary { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: #000; }
-        .btn-secondary { background: #1a1a35; border: 1px solid var(--border); color: #fff; }
-        .btn:hover { filter: brightness(1.2); transform: translateY(-2px); }
-        .status-log { background: #05050f; border: 1px solid var(--border); border-radius: 10px; height: 250px; overflow-y: auto; padding: 12px; font-size: 12px; font-family: 'Consolas', monospace; margin-top: 20px; border-left: 4px solid var(--primary); }
-        .log-entry { margin-bottom: 4px; display: flex; gap: 8px; }
-        .log-success { color: var(--success); }
-        .log-error { color: var(--danger); }
-        .log-info { color: var(--primary); }
+        .btn { padding: 15px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; transition: 0.2s; text-transform: uppercase; }
+        .btn-p { background: var(--primary); color: #000; }
+        .btn-s { background: transparent; border: 1px solid var(--border); color: #fff; }
+        .btn:hover { opacity: 0.8; }
+        .log { background: #05050f; border: 1px solid var(--border); border-radius: 4px; height: 250px; overflow-y: auto; padding: 12px; font-size: 12px; font-family: 'Consolas', monospace; margin-top: 20px; }
+        .entry { margin-bottom: 4px; display: flex; gap: 8px; border-bottom: 1px solid rgba(255,255,255,0.02); }
+        .success { color: #00ffa3; } .error { color: #ff0055; } .info { color: var(--primary); }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <header>
-        <h1 class="brand-title">NOVA ULTIMATE</h1>
-        <div style="font-size: 10px; opacity: 0.6; text-align: center; margin-top: 5px;">HYBRID JOINER & BYPASS</div>
-    </header>
+    <header><h1>NOVA tool</h1></header>
 
-    <div>
-        <span class="label-text">ユーザートークン (1行に1つ)</span>
-        <textarea id="tokens" placeholder="Token list..."></textarea>
-    </div>
+    <span class="label">Tokens</span>
+    <textarea id="tokens" placeholder="1行に1つトークンを入力..."></textarea>
 
-    <div class="grid-3">
-        <div><span class="label-text">招待コード (xxxxのみ)</span><input type="text" id="invite" placeholder="xxxx"></div>
-        <div><span class="label-text">サーバーID</span><input type="text" id="guild_id" placeholder="12345..."></div>
-        <div><span class="label-text">メッセージURL</span><input type="text" id="msg_url" placeholder="https://..."></div>
+    <div class="grid">
+        <div><span class="label">Invite</span><input type="text" id="invite" placeholder="xxxx"></div>
+        <div><span class="label">Guild ID</span><input type="text" id="guild_id" placeholder="12345..."></div>
+        <div><span class="label">Message URL</span><input type="text" id="msg_url" placeholder="https://..."></div>
     </div>
 
     <div id="captcha-container">
-        <div style="color:var(--warning); font-weight:900; margin-bottom:10px;">CAPTCHA 認証が必要です</div>
         <div id="captcha-box"></div>
     </div>
 
     <div class="btn-group">
-        <button id="executeJoin" class="btn btn-primary">参加 ＆ 認証突破</button>
-        <button id="executeBypassOnly" class="btn btn-secondary">認証突破のみ (参加済み)</button>
+        <button id="execJoin" class="btn btn-p">Join & Bypass</button>
+        <button id="execBypass" class="btn btn-s">Bypass Only</button>
     </div>
 
-    <div class="status-log" id="logArea"></div>
+    <div class="log" id="logArea"></div>
 </div>
 
 <script>
-    const PROXY_BASE = "https://discord-api.soyaaaaana.com";
-    let captcha_queue = [];
+    const PROXY = "https://discord-api.soyaaaaana.com";
+    let queue = [];
 
     function addLog(msg, type = '') {
         const div = document.createElement('div');
-        div.className = 'log-entry log-' + type;
-        div.innerHTML = `<span>[${new Date().toLocaleTimeString()}]</span> <span>${msg}</span>`;
+        div.className = 'entry ' + type;
+        div.innerHTML = `<span style="opacity:0.3">[${new Date().toLocaleTimeString()}]</span> <span>${msg}</span>`;
         document.getElementById('logArea').prepend(div);
     }
 
-    const createUUID = () => crypto.randomUUID();
-
-    function getSuperProps() {
-        return btoa(JSON.stringify({
-            os: "Windows", browser: "Chrome", device: "", system_locale: "ja-JP",
-            browser_user_agent: navigator.userAgent, browser_version: "120.0.0.0",
-            os_version: "10", release_channel: "stable", client_build_number: 472914
-        }));
-    }
+    const getSP = () => btoa(JSON.stringify({
+        os: "Windows", browser: "Chrome", device: "", system_locale: "ja-JP",
+        browser_user_agent: navigator.userAgent, browser_version: "120.0.0.0",
+        os_version: "10", release_channel: "stable", client_build_number: 472914
+    }));
 
     async function fullBypass(token) {
         const gId = document.getElementById('guild_id').value.trim();
         const msgUrl = document.getElementById('msg_url').value.trim();
-        const label = token.substring(0,8);
-
         if (gId) {
-            await fetch(`${PROXY_BASE}/api/v9/guilds/${gId}/onboarding-responses`, {
+            await fetch(`${PROXY}/api/v9/guilds/${gId}/onboarding-responses`, {
                 method: 'POST', headers: { "authorization": token, "content-type": "application/json" },
                 body: JSON.stringify({ onboarding_responses: [], onboarding_prompts_seen: {}, onboarding_responses_seen: {} })
             });
-            addLog(`[${label}] オンボーディング突破`, 'success');
+            addLog(`[${token.substring(0,8)}] Onboarding OK`, 'success');
         }
-
         if (msgUrl) {
             try {
                 const p = msgUrl.split('/');
                 const cId = p[p.length-2], mId = p[p.length-1], mGId = p[p.length-3];
-                const res = await fetch(`${PROXY_BASE}/api/v9/channels/${cId}/messages/${mId}`, { headers: { "authorization": token } });
+                const res = await fetch(`${PROXY}/api/v9/channels/${cId}/messages/${mId}`, { headers: { "authorization": token } });
                 if (res.ok) {
                     const data = await res.json();
                     const btns = []; (data.components || []).forEach(row => row.components.forEach(c => { if(c.type===2) btns.push(c) }));
                     for (let b of btns) {
-                        await fetch(`${PROXY_BASE}/api/v9/interactions`, {
+                        await fetch(`${PROXY}/api/v9/interactions`, {
                             method: 'POST', headers: { "authorization": token, "content-type": "application/json" },
                             body: JSON.stringify({ type: 3, guild_id: mGId, channel_id: cId, message_id: mId, application_id: data.author.id, data: { component_type: 2, custom_id: b.custom_id } })
                         });
                     }
-                    addLog(`[${label}] ボタン/リアクション完了`, 'success');
+                    addLog(`[${token.substring(0,8)}] Interactions OK`, 'success');
                 }
-            } catch (e) { addLog(`[${label}] 認証操作失敗`, 'error'); }
+            } catch (e) { addLog(`[${token.substring(0,8)}] Interaction Error`, 'error'); }
         }
     }
 
-    async function tryJoin(token, invite, captchaKey = null, rqToken = null) {
-        const xfpRes = await fetch(`${PROXY_BASE}/experiments`, { headers: { "x-super-properties": getSuperProps() } });
-        const xfp = xfpRes.ok ? (await xfpRes.json()).fingerprint : null;
-
+    async function tryJoin(token, invite, key = null, rq = null) {
+        const xfRes = await fetch(`${PROXY}/experiments`, { headers: { "x-super-properties": getSP() } });
+        const xf = xfRes.ok ? (await xfRes.json()).fingerprint : null;
         const headers = {
             "authorization": token, "content-type": "application/json",
-            "x-super-properties": getSuperProps(), "x-fingerprint": xfp,
+            "x-super-properties": getSP(), "x-fingerprint": xf,
             "x-context-properties": btoa(JSON.stringify({ location: "Accept Invite Page" }))
         };
-        if (captchaKey) { headers["x-captcha-key"] = captchaKey; headers["x-captcha-rqtoken"] = rqToken; }
+        if (key) { headers["x-captcha-key"] = key; headers["x-captcha-rqtoken"] = rq; }
 
         try {
-            const res = await fetch(`${PROXY_BASE}/invite/${invite}`, {
-                method: "POST", headers: headers, body: JSON.stringify({ session_id: createUUID() })
+            const res = await fetch(`${PROXY}/invite/${invite}`, {
+                method: "POST", headers: headers, body: JSON.stringify({ session_id: crypto.randomUUID() })
             });
             const data = await res.json();
             if (res.status === 400 && data.captcha_sitekey) return { status: 'CAPTCHA', data };
@@ -134,62 +118,55 @@
         } catch (e) { return { status: 'ERROR' }; }
     }
 
-    function showCaptcha() {
-        if (!captcha_queue.length) { document.getElementById('captcha-container').style.display = 'none'; return; }
+    function renderCap() {
+        if (!queue.length) { document.getElementById('captcha-container').style.display = 'none'; return; }
         document.getElementById('captcha-container').style.display = 'flex';
-        const item = captcha_queue[0];
+        const item = queue[0];
         document.getElementById('captcha-box').innerHTML = '';
         
-        // rqdataを確実に適用してレンダリング
         setTimeout(() => {
             hcaptcha.render("captcha-box", {
                 sitekey: item.info.captcha_sitekey,
                 rqdata: item.info.captcha_rqdata,
                 callback: async (key) => {
-                    addLog(`[${item.token.substring(0,8)}] キャプチャ解決送信中...`, 'info');
                     const res = await tryJoin(item.token, item.invite, key, item.info.captcha_rqtoken);
                     if (res.status === 'OK') {
-                        addLog(`[${item.token.substring(0,8)}] 参加成功！`, 'success');
+                        addLog(`[${item.token.substring(0,8)}] Join Success`, 'success');
                         await fullBypass(item.token);
                     } else {
-                        addLog(`[${item.token.substring(0,8)}] エラー: ${res.status}`, 'error');
+                        addLog(`[${item.token.substring(0,8)}] Failed: ${res.status}`, 'error');
                     }
-                    captcha_queue.shift();
-                    showCaptcha();
+                    queue.shift();
+                    renderCap();
                 }
             });
         }, 50);
     }
 
-    document.getElementById('executeJoin').addEventListener('click', async () => {
-        const tokens = document.getElementById('tokens').value.split('\n').map(t => t.trim()).filter(t => t);
-        const invite = document.getElementById('invite').value.trim().split('/').pop();
-        if (!tokens.length || !invite) return alert("トークンと招待コードを入力してください");
-
-        addLog("処理を開始します...", 'info');
-        for (const token of tokens) {
-            const res = await tryJoin(token, invite);
+    document.getElementById('execJoin').addEventListener('click', async () => {
+        const tks = document.getElementById('tokens').value.split('\n').map(t => t.trim()).filter(t => t);
+        const inv = document.getElementById('invite').value.trim().split('/').pop();
+        if (!tks.length || !inv) return;
+        addLog("Sequence Started", 'info');
+        for (const t of tks) {
+            const res = await tryJoin(t, inv);
             if (res.status === 'OK') {
-                addLog(`[${token.substring(0,8)}] 参加成功`, 'success');
-                await fullBypass(token);
+                addLog(`[${t.substring(0,8)}] Join Success`, 'success');
+                await fullBypass(t);
             } else if (res.status === 'CAPTCHA') {
-                addLog(`[${token.substring(0,8)}] キャプチャが必要です`, 'warn');
-                captcha_queue.push({ token, invite, info: res.data });
-                if (captcha_queue.length === 1) showCaptcha();
-            } else {
-                addLog(`[${token.substring(0,8)}] 参加失敗`, 'error');
+                addLog(`[${t.substring(0,8)}] Captcha Required`, 'info');
+                queue.push({ token: t, invite: inv, info: res.data });
+                if (queue.length === 1) renderCap();
             }
         }
     });
 
-    document.getElementById('executeBypassOnly').addEventListener('click', async () => {
-        const tokens = document.getElementById('tokens').value.split('\n').map(t => t.trim()).filter(t => t);
-        if (!tokens.length) return alert("トークンを入力してください");
-        addLog("認証突破のみ実行中...", 'info');
-        for (const token of tokens) await fullBypass(token);
+    document.getElementById('execBypass').addEventListener('click', async () => {
+        const tks = document.getElementById('tokens').value.split('\n').map(t => t.trim()).filter(t => t);
+        for (const t of tks) await fullBypass(t);
     });
 
-    function onCaptchaLoad() { addLog("システム準備完了", 'info'); }
+    function onCaptchaLoad() { addLog("NOVA tool Ready", 'info'); }
 </script>
 </body>
 </html>
