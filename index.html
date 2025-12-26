@@ -3,296 +3,183 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NOVA TOOL - Global Edition</title>
+    <title>NOVA tool</title>
     <script src="https://js.hcaptcha.com/1/api.js?onload=onCaptchaLoad&render=explicit" async defer></script>
     <style>
-        :root {
-            --bg-color: #0b0b12;
-            --card-bg: #151525;
-            --text-color: #e0e0e8;
-            --primary: #00d4ff;
-            --secondary: #7000ff;
-            --danger: #ff0055;
-            --success: #00ffa3;
-            --warning: #ffaa00;
-            --border: #2a2a40;
-        }
-
-        body { font-family: 'Segoe UI', system-ui, sans-serif; background-color: var(--bg-color); color: var(--text-color); display: flex; justify-content: center; padding: 20px; margin: 0; }
-        .container { width: 100%; max-width: 850px; background: var(--card-bg); padding: 30px; border-radius: 20px; box-shadow: 0 0 50px rgba(0, 0, 0, 0.5); border: 1px solid var(--border); position: relative; }
-        
-        /* Language Switcher */
-        .lang-switcher { position: absolute; top: 25px; right: 25px; display: flex; gap: 5px; }
-        .lang-btn { background: transparent; border: 1px solid var(--primary); color: var(--primary); padding: 4px 10px; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: bold; transition: 0.2s; }
-        .lang-btn.active { background: var(--primary); color: #000; }
-
-        header { text-align: center; margin-bottom: 30px; }
-        .brand-title { margin: 0; font-size: 36px; font-weight: 900; letter-spacing: 8px; color: var(--primary); text-transform: uppercase; text-shadow: 0 0 15px rgba(0, 212, 255, 0.4); }
-        .subtitle { font-size: 10px; opacity: 0.5; letter-spacing: 5px; text-transform: uppercase; margin-top: 5px; }
-
-        label { display: block; font-size: 11px; margin-bottom: 6px; color: var(--primary); font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
-        textarea, input[type="text"] { width: 100%; padding: 14px; background: #080814; border: 1px solid var(--border); border-radius: 10px; color: white; box-sizing: border-box; outline: none; font-family: 'Consolas', monospace; font-size: 13px; margin-bottom: 20px; transition: border 0.2s; }
-        textarea:focus, input:focus { border-color: var(--primary); }
-        textarea { height: 140px; }
-
-        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
-
-        #captcha-container { 
-            margin: 20px 0; display: none; flex-direction: column; align-items: center; 
-            background: rgba(0, 212, 255, 0.07); padding: 25px; border-radius: 15px; border: 2px dashed var(--primary); 
-        }
-
-        .btn-group { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 10px; }
-        .btn { padding: 18px; border: none; border-radius: 10px; font-weight: 900; cursor: pointer; text-transform: uppercase; font-size: 13px; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .btn-primary { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: #000; box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3); }
-        .btn-secondary { background: #1a1a35; border: 1px solid var(--border); color: #fff; }
-        .btn:hover { filter: brightness(1.2); transform: translateY(-2px); }
-        .btn:active { transform: translateY(0); }
-
-        .status-log { background: #05050f; border: 1px solid var(--border); border-radius: 12px; height: 320px; overflow-y: auto; padding: 15px; font-size: 12px; font-family: 'Consolas', monospace; margin-top: 25px; border-left: 4px solid var(--primary); }
-        .log-entry { margin-bottom: 6px; border-bottom: 1px solid rgba(255,255,255,0.03); padding-bottom: 4px; display: flex; gap: 10px; }
-        .log-time { color: #555; min-width: 65px; }
-        .log-success { color: var(--success); }
-        .log-error { color: var(--danger); }
-        .log-warn { color: var(--warning); }
-        .log-info { color: var(--primary); }
+        :root { --bg: #050508; --card: #0f1016; --primary: #00d4ff; --border: #1f212d; --text: #a0a2ad; --success: #00ffa3; --error: #ff3e3e; }
+        body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: #fff; display: flex; justify-content: center; padding: 40px 20px; margin: 0; }
+        .container { width: 100%; max-width: 720px; background: var(--card); padding: 32px; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
+        header { border-bottom: 1px solid var(--border); margin-bottom: 24px; padding-bottom: 16px; display: flex; justify-content: space-between; align-items: center; }
+        h1 { margin: 0; font-size: 20px; letter-spacing: 2px; color: var(--primary); font-weight: 800; }
+        .label { display: block; font-size: 11px; margin-bottom: 8px; color: var(--text); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+        textarea, input { width: 100%; padding: 12px; background: #16171f; border: 1px solid var(--border); border-radius: 6px; color: #fff; box-sizing: border-box; outline: none; font-family: 'JetBrains Mono', monospace; font-size: 13px; margin-bottom: 16px; transition: 0.2s; }
+        textarea:focus, input:focus { border-color: var(--primary); background: #1a1c26; }
+        textarea { height: 100px; resize: none; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+        #captcha-area { margin: 16px 0; display: none; flex-direction: column; align-items: center; background: #16171f; padding: 20px; border-radius: 8px; border: 1px solid var(--primary); }
+        .btn-group { display: grid; grid-template-columns: 1.5fr 1fr; gap: 12px; margin-top: 8px; }
+        .btn { padding: 14px; border: none; border-radius: 6px; font-weight: 700; cursor: pointer; transition: 0.2s; font-size: 13px; }
+        .btn-p { background: var(--primary); color: #000; }
+        .btn-s { background: #1f212d; color: #fff; }
+        .btn:hover { opacity: 0.9; transform: translateY(-1px); }
+        .log { background: #08090d; border: 1px solid var(--border); border-radius: 6px; height: 280px; overflow-y: auto; padding: 16px; font-size: 12px; font-family: monospace; margin-top: 24px; color: var(--text); }
+        .entry { margin-bottom: 6px; display: flex; gap: 10px; border-bottom: 1px solid #16171f; padding-bottom: 4px; }
+        .time { opacity: 0.3; }
+        .sc { color: var(--success); } .er { color: var(--error); } .in { color: var(--primary); }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="lang-switcher">
-        <button id="btnJP" class="lang-btn active" onclick="setLang('jp')">JP</button>
-        <button id="btnEN" class="lang-btn" onclick="setLang('en')">EN</button>
+    <header><h1>NOVA tool</h1><div style="font-size:10px; opacity:0.4;">v2.5 Hybrid</div></header>
+
+    <span class="label">Tokens</span>
+    <textarea id="tokens" placeholder="Enter tokens (one per line)"></textarea>
+
+    <div class="grid">
+        <div><span class="label">Invite</span><input type="text" id="invite" placeholder="xxxx"></div>
+        <div><span class="label">Guild ID</span><input type="text" id="guild_id" placeholder="ID"></div>
+        <div><span class="label">Msg URL</span><input type="text" id="msg_url" placeholder="https://..."></div>
     </div>
 
-    <header>
-        <h1 class="brand-title">NOVA ULTIMATE</h1>
-        <p class="subtitle">Global Hybrid Bypass System</p>
-    </header>
-
-    <div class="section">
-        <label id="lblTokens">User Tokens</label>
-        <textarea id="tokens" placeholder="Token list (one per line)..."></textarea>
-    </div>
-
-    <div class="grid-3">
-        <div class="section">
-            <label id="lblInvite">Invite Link / Code</label>
-            <input type="text" id="invite" placeholder="discord.gg/xxxx">
-        </div>
-        <div class="section">
-            <label id="lblGuild">Server ID (Onboarding)</label>
-            <input type="text" id="guild_id" placeholder="1234567890">
-        </div>
-        <div class="section">
-            <label id="lblMsg">Message URL (Verify)</label>
-            <input type="text" id="msg_url" placeholder="https://discord.com/...">
-        </div>
-    </div>
-
-    <div id="captcha-container">
-        <span id="txtCaptcha" style="color:var(--warning); font-weight:900; margin-bottom:15px; letter-spacing: 2px;">CAPTCHA VERIFICATION REQUIRED</span>
+    <div id="captcha-area">
         <div id="captcha-box"></div>
     </div>
 
     <div class="btn-group">
-        <button id="executeJoin" class="btn btn-primary">Join & Full Bypass</button>
-        <button id="executeBypassOnly" class="btn btn-secondary">Bypass Only</button>
+        <button id="execJoin" class="btn btn-p">JOIN & BYPASS</button>
+        <button id="execBypass" class="btn btn-s">BYPASS ONLY</button>
     </div>
 
-    <div class="status-log" id="logArea">
-        <div class="log-entry log-info"><span class="log-time">SYSTEM</span><span id="txtReady">Ready. Connected to Proxy API.</span></div>
-    </div>
+    <div class="log" id="logArea"></div>
 </div>
 
 <script>
-    let currentLang = 'jp';
-    let captcha_invites = [];
-    let hCaptchaLoaded = false;
-    const PROXY_BASE = "https://discord-api.soyaaaaana.com";
-
-    const UI_TEXT = {
-        jp: {
-            lblTokens: "ユーザートークン (1行に1つ)",
-            lblInvite: "招待リンク / コード",
-            lblGuild: "サーバーID (オンボーディング)",
-            lblMsg: "メッセージURL (ボタン/リアクション)",
-            txtCaptcha: "CAPTCHA解決が必要です",
-            executeJoin: "参加 ＆ 一斉突破開始",
-            executeBypassOnly: "突破のみ実行 (参加済み)",
-            txtReady: "システム待機中。プロキシ経由で接続済み。",
-            logStartJoin: "参加シーケンスを開始します...",
-            logStartBypass: "突破シーケンスのみ開始します...",
-            logCapReq: "Captchaが必要なトークンがあります...",
-            logSuccess: "成功", logFail: "失敗", logBypassed: "突破完了"
-        },
-        en: {
-            lblTokens: "User Tokens (One per line)",
-            lblInvite: "Invite Link / Code",
-            lblGuild: "Server ID (Onboarding)",
-            lblMsg: "Message URL (Verify)",
-            txtCaptcha: "CAPTCHA SOLVING REQUIRED",
-            executeJoin: "Join & Full Bypass",
-            executeBypassOnly: "Bypass Only (Joined)",
-            txtReady: "System ready. Connected via Proxy API.",
-            logStartJoin: "Initiating Join Sequence...",
-            logStartBypass: "Initiating Bypass Only Sequence...",
-            logCapReq: "Captcha required for some tokens...",
-            logSuccess: "Success", logFail: "Failed", logBypassed: "Bypassed"
-        }
-    };
-
-    function setLang(l) {
-        currentLang = l;
-        document.getElementById('btnJP').classList.toggle('active', l === 'jp');
-        document.getElementById('btnEN').classList.toggle('active', l === 'en');
-        const t = UI_TEXT[l];
-        for (let id in t) {
-            const el = document.getElementById(id);
-            if (el) {
-                if (el.tagName === 'BUTTON' || el.tagName === 'SPAN' || el.tagName === 'LABEL') el.innerText = t[id];
-                else if (el.id === 'txtReady') el.innerText = t[id];
-            }
-        }
-    }
-
-    function onCaptchaLoad() { hCaptchaLoaded = true; }
+    const PROXY = "https://discord-api.soyaaaaana.com";
+    let capQueue = [];
 
     function addLog(msg, type = '') {
         const div = document.createElement('div');
-        div.className = 'log-entry log-' + type;
-        const time = new Date().toLocaleTimeString([], { hour12: false });
-        div.innerHTML = `<span class="log-time">[${time}]</span> <span>${msg}</span>`;
+        div.className = `entry ${type}`;
+        div.innerHTML = `<span class="time">${new Date().toLocaleTimeString()}</span> <span>${msg}</span>`;
         const logArea = document.getElementById('logArea');
         logArea.prepend(div);
     }
 
-    const createUUID = () => {
-        let d = new BigUint64Array(2);
-        crypto.getRandomValues(d);
-        let h = (d[0].toString(16).padStart(16, '0') + d[1].toString(16).padStart(16, '0')).slice(0, 32);
-        h = h.substring(0, 12) + '4' + h.substring(13);
-        const v = ((parseInt(h[16], 16) & 0x3) | 0x8).toString(16);
-        h = h.substring(0, 16) + v + h.substring(17);
-        return h.replace(/^(.{8})(.{4})(.{4})(.{4})(.{12})$/, '$1-$2-$3-$4-$5');
-    };
+    const getSP = () => btoa(JSON.stringify({
+        os: "Windows", browser: "Chrome", device: "", system_locale: "ja-JP",
+        browser_user_agent: navigator.userAgent, browser_version: "120.0.0.0",
+        os_version: "10", release_channel: "stable", client_build_number: 472914
+    }));
 
-    function getSuperProperties() {
-        return btoa(JSON.stringify({
-            os: "Windows", browser: "Chrome", device: "", system_locale: "ja",
-            browser_user_agent: navigator.userAgent, browser_version: "120.0.0.0",
-            os_version: "10", release_channel: "stable", client_build_number: 472914,
-            client_launch_id: createUUID(), launch_signature: createUUID()
-        }));
-    }
-
-    async function fullBypassSequence(token) {
+    async function bypass(token) {
         const gId = document.getElementById('guild_id').value.trim();
         const msgUrl = document.getElementById('msg_url').value.trim();
-        const t_label = token.substring(0, 8);
+        const label = token.substring(0,8);
 
-        // 1. Onboarding
         if (gId) {
-            await fetch(`${PROXY_BASE}/api/v9/guilds/${gId}/onboarding-responses`, {
+            await fetch(`${PROXY}/api/v9/guilds/${gId}/onboarding-responses`, {
                 method: 'POST', headers: { "authorization": token, "content-type": "application/json" },
                 body: JSON.stringify({ onboarding_responses: [], onboarding_prompts_seen: {}, onboarding_responses_seen: {} })
             });
-            addLog(`[${t_label}] Onboarding Bypassed`, 'success');
+            addLog(`[${label}] Onboarding OK`, 'sc');
         }
 
-        // 2. Interaction
         if (msgUrl) {
             try {
                 const p = msgUrl.split('/');
                 const cId = p[p.length-2], mId = p[p.length-1], mGId = p[p.length-3];
-                const res = await fetch(`${PROXY_BASE}/api/v9/channels/${cId}/messages/${mId}`, { headers: { "authorization": token } });
+                const res = await fetch(`${PROXY}/api/v9/channels/${cId}/messages/${mId}`, { headers: { "authorization": token } });
                 if (res.ok) {
                     const data = await res.json();
-                    if (data.reactions) {
-                        for (let r of data.reactions) {
-                            let e = r.emoji.id ? `${r.emoji.name}:${r.emoji.id}` : encodeURIComponent(r.emoji.name);
-                            await fetch(`${PROXY_BASE}/api/v9/channels/${cId}/messages/${mId}/reactions/${e}/@me`, { method: 'PUT', headers: { "authorization": token } });
-                        }
-                    }
-                    const btns = [];
-                    (data.components || []).forEach(row => row.components.forEach(c => { if(c.type===2) btns.push(c) }));
+                    const btns = []; (data.components || []).forEach(row => row.components.forEach(c => { if(c.type===2) btns.push(c) }));
                     for (let b of btns) {
-                        await fetch(`${PROXY_BASE}/api/v9/interactions`, {
+                        await fetch(`${PROXY}/api/v9/interactions`, {
                             method: 'POST', headers: { "authorization": token, "content-type": "application/json" },
                             body: JSON.stringify({ type: 3, guild_id: mGId, channel_id: cId, message_id: mId, application_id: data.author.id, data: { component_type: 2, custom_id: b.custom_id } })
                         });
                     }
-                    addLog(`[${t_label}] Interaction (Buttons/Reacts) done`, 'success');
+                    addLog(`[${label}] Interactions OK`, 'sc');
                 }
-            } catch (e) {}
+            } catch (e) { addLog(`[${label}] Bypass Failed`, 'er'); }
         }
     }
 
-    async function processJoin(token, inviteCode, xfp, captchaKey = null, rqToken = null) {
-        const xcp = btoa(JSON.stringify({ location: "Accept Invite Page" }));
+    async function requestJoin(token, invite, key = null, rq = null) {
+        const xfRes = await fetch(`${PROXY}/experiments`, { headers: { "x-super-properties": getSP() } });
+        const xf = xfRes.ok ? (await xfRes.json()).fingerprint : null;
+
         const headers = {
             "authorization": token, "content-type": "application/json",
-            "x-super-properties": getSuperProperties(), "x-fingerprint": xfp, "x-context-properties": xcp
+            "x-super-properties": getSP(), "x-fingerprint": xf,
+            "x-context-properties": btoa(JSON.stringify({ location: "Accept Invite Page" }))
         };
-        if (captchaKey) { headers["x-captcha-key"] = captchaKey; headers["x-captcha-rqtoken"] = rqToken; }
+        if (key) { headers["x-captcha-key"] = key; headers["x-captcha-rqtoken"] = rq; }
 
-        const res = await fetch(`${PROXY_BASE}/invite/${inviteCode}`, {
-            method: "POST", headers: headers,
-            body: JSON.stringify({ session_id: createUUID() })
-        });
-
-        if (res.status === 400) {
-            const json = await res.json();
-            if (json.captcha_sitekey) {
-                addLog(`[${token.substring(0,8)}] ${UI_TEXT[currentLang].logCapReq}`, 'warn');
-                captcha_invites.push({ token, inviteCode, xfp, json });
-                showNextCaptcha();
-                return "CAPTCHA";
-            }
-        }
-        return res.ok;
+        try {
+            const res = await fetch(`${PROXY}/invite/${invite}`, {
+                method: "POST", headers: headers, body: JSON.stringify({ session_id: crypto.randomUUID() })
+            });
+            const data = await res.json();
+            if (res.status === 400 && data.captcha_sitekey) return { status: 'CAPTCHA', data };
+            return { status: res.ok ? 'OK' : 'FAIL' };
+        } catch (e) { return { status: 'ERROR' }; }
     }
 
-    function showNextCaptcha() {
-        if (!captcha_invites.length) { document.getElementById('captcha-container').style.display = 'none'; return; }
-        document.getElementById('captcha-container').style.display = 'flex';
-        const item = captcha_invites[0];
-        hcaptcha.render("captcha-box", {
-            sitekey: item.json.captcha_sitekey,
-            callback: async (key) => {
-                hcaptcha.reset();
-                const success = await processJoin(item.token, item.inviteCode, item.xfp, key, item.json.captcha_rqtoken);
-                if (success === true) { addLog(`[${item.token.substring(0,8)}] Join Success!`, 'success'); await fullBypassSequence(item.token); }
-                captcha_invites.shift();
-                showNextCaptcha();
-            }
-        });
-    }
-
-    document.getElementById('executeJoin').addEventListener('click', async () => {
-        const tokens = document.getElementById('tokens').value.split('\n').map(t => t.trim()).filter(t => t);
-        const inviteCode = document.getElementById('invite').value.trim().split('/').pop();
-        if (!tokens.length || !inviteCode) return;
-
-        addLog(UI_TEXT[currentLang].logStartJoin, 'info');
-        const resXfp = await fetch(`${PROXY_BASE}/experiments`, { headers: { "x-super-properties": getSuperProperties() } });
-        const xfp = resXfp.ok ? (await resXfp.json()).fingerprint : null;
+    function renderCaptcha() {
+        if (!capQueue.length) { document.getElementById('captcha-area').style.display = 'none'; return; }
+        document.getElementById('captcha-area').style.display = 'flex';
+        const item = capQueue[0];
+        document.getElementById('captcha-box').innerHTML = '';
         
-        for (const token of tokens) {
-            const result = await processJoin(token, inviteCode, xfp);
-            if (result === true) { addLog(`[${token.substring(0,8)}] Join Success`, 'success'); await fullBypassSequence(token); }
-        }
-    });
+        setTimeout(() => {
+            hcaptcha.render("captcha-box", {
+                sitekey: item.info.captcha_sitekey,
+                rqdata: item.info.captcha_rqdata, // 重要な修正: rqdataを渡す
+                callback: async (key) => {
+                    const res = await requestJoin(item.token, item.invite, key, item.info.captcha_rqtoken);
+                    if (res.status === 'OK') {
+                        addLog(`[${item.token.substring(0,8)}] Join Success`, 'sc');
+                        await bypass(item.token);
+                    } else {
+                        addLog(`[${item.token.substring(0,8)}] Failed to Join`, 'er');
+                    }
+                    capQueue.shift();
+                    renderCaptcha();
+                }
+            });
+        }, 50);
+    }
 
-    document.getElementById('executeBypassOnly').addEventListener('click', async () => {
-        const tokens = document.getElementById('tokens').value.split('\n').map(t => t.trim()).filter(t => t);
-        if (!tokens.length) return;
-        addLog(UI_TEXT[currentLang].logStartBypass, 'info');
-        for (const token of tokens) { await fullBypassSequence(token); }
-    });
+    window.onload = () => {
+        document.getElementById('execJoin').onclick = async () => {
+            const tks = document.getElementById('tokens').value.split('\n').map(t => t.trim()).filter(t => t);
+            let inv = document.getElementById('invite').value.trim();
+            if (inv.includes('/')) inv = inv.split('/').pop();
+            if (!tks.length || !inv) return;
 
-    setLang('jp'); // Default
+            addLog("Starting Join sequence...", "in");
+            for (const t of tks) {
+                const res = await requestJoin(t, inv);
+                if (res.status === 'OK') {
+                    addLog(`[${t.substring(0,8)}] Join Success`, 'sc');
+                    await bypass(t);
+                } else if (res.status === 'CAPTCHA') {
+                    addLog(`[${t.substring(0,8)}] Captcha required`, 'in');
+                    capQueue.push({ token: t, invite: inv, info: res.data });
+                    if (capQueue.length === 1) renderCaptcha();
+                }
+            }
+        };
+
+        document.getElementById('execBypass').onclick = async () => {
+            const tks = document.getElementById('tokens').value.split('\n').map(t => t.trim()).filter(t => t);
+            addLog("Starting Bypass sequence...", "in");
+            for (const t of tks) await bypass(t);
+        };
+    };
+
+    function onCaptchaLoad() { addLog("System Ready", "in"); }
 </script>
 </body>
 </html>
