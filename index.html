@@ -4,46 +4,47 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NOVA tool</title>
-    <script src="https://js.hcaptcha.com/1/api.js?onload=onCaptchaLoad&render=explicit" async defer></script>
+    <script src="https://js.hcaptcha.com/1/api.js?render=explicit" async defer></script>
     <style>
-        :root { --bg: #050508; --card: #0f1016; --primary: #00d4ff; --border: #1f212d; --text: #a0a2ad; --success: #00ffa3; --error: #ff3e3e; }
-        body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: #fff; display: flex; justify-content: center; padding: 40px 20px; margin: 0; }
-        .container { width: 100%; max-width: 720px; background: var(--card); padding: 32px; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
-        header { border-bottom: 1px solid var(--border); margin-bottom: 24px; padding-bottom: 16px; display: flex; justify-content: space-between; align-items: center; }
-        h1 { margin: 0; font-size: 20px; letter-spacing: 2px; color: var(--primary); font-weight: 800; }
-        .label { display: block; font-size: 11px; margin-bottom: 8px; color: var(--text); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
-        textarea, input { width: 100%; padding: 12px; background: #16171f; border: 1px solid var(--border); border-radius: 6px; color: #fff; box-sizing: border-box; outline: none; font-family: 'JetBrains Mono', monospace; font-size: 13px; margin-bottom: 16px; transition: 0.2s; }
-        textarea:focus, input:focus { border-color: var(--primary); background: #1a1c26; }
-        textarea { height: 100px; resize: none; }
-        .grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
-        #captcha-area { margin: 16px 0; display: none; flex-direction: column; align-items: center; background: #16171f; padding: 20px; border-radius: 8px; border: 1px solid var(--primary); }
-        .btn-group { display: grid; grid-template-columns: 1.5fr 1fr; gap: 12px; margin-top: 8px; }
-        .btn { padding: 14px; border: none; border-radius: 6px; font-weight: 700; cursor: pointer; transition: 0.2s; font-size: 13px; }
+        :root { --bg: #000000; --card: #0a0a0c; --primary: #00e5ff; --border: #1a1a1c; --text: #888888; --success: #00ff88; --error: #ff3366; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: #fff; display: flex; justify-content: center; padding: 40px 20px; margin: 0; }
+        .container { width: 100%; max-width: 680px; background: var(--card); padding: 40px; border-radius: 16px; border: 1px solid var(--border); }
+        header { margin-bottom: 30px; }
+        h1 { margin: 0; font-size: 18px; letter-spacing: 4px; color: var(--primary); font-weight: 900; text-transform: uppercase; }
+        .label { display: block; font-size: 10px; margin-bottom: 8px; color: var(--text); font-weight: 700; text-transform: uppercase; letter-spacing: 2px; }
+        textarea, input { width: 100%; padding: 14px; background: #000; border: 1px solid var(--border); border-radius: 8px; color: #fff; box-sizing: border-box; outline: none; font-family: "SF Mono", "JetBrains Mono", monospace; font-size: 13px; margin-bottom: 20px; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+        textarea:focus, input:focus { border-color: var(--primary); box-shadow: 0 0 10px rgba(0, 229, 255, 0.1); }
+        textarea { height: 120px; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; }
+        /* Captchaの表示エリアを改善 */
+        #captcha-area { margin: 0 0 20px 0; display: none; background: #000; padding: 20px; border-radius: 8px; border: 1px solid var(--primary); flex-direction: column; align-items: center; min-height: 80px; justify-content: center; }
+        .btn-group { display: grid; grid-template-columns: 1.6fr 1fr; gap: 15px; }
+        .btn { padding: 16px; border: none; border-radius: 8px; font-weight: 800; cursor: pointer; transition: 0.2s; font-size: 12px; letter-spacing: 1px; }
         .btn-p { background: var(--primary); color: #000; }
-        .btn-s { background: #1f212d; color: #fff; }
-        .btn:hover { opacity: 0.9; transform: translateY(-1px); }
-        .log { background: #08090d; border: 1px solid var(--border); border-radius: 6px; height: 280px; overflow-y: auto; padding: 16px; font-size: 12px; font-family: monospace; margin-top: 24px; color: var(--text); }
-        .entry { margin-bottom: 6px; display: flex; gap: 10px; border-bottom: 1px solid #16171f; padding-bottom: 4px; }
-        .time { opacity: 0.3; }
+        .btn-s { background: #111; color: #fff; border: 1px solid var(--border); }
+        .btn:hover { filter: brightness(1.1); transform: translateY(-1px); }
+        .log { background: #000; border: 1px solid var(--border); border-radius: 8px; height: 260px; overflow-y: auto; padding: 20px; font-size: 11px; font-family: monospace; margin-top: 30px; color: #666; line-height: 1.6; }
+        .entry { margin-bottom: 8px; border-bottom: 1px solid #0f0f11; padding-bottom: 6px; }
         .sc { color: var(--success); } .er { color: var(--error); } .in { color: var(--primary); }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <header><h1>NOVA tool</h1><div style="font-size:10px; opacity:0.4;">v2.5 Hybrid</div></header>
+    <header><h1>NOVA tool</h1></header>
 
-    <span class="label">Tokens</span>
-    <textarea id="tokens" placeholder="Enter tokens (one per line)"></textarea>
+    <span class="label">User Tokens</span>
+    <textarea id="tokens" placeholder="Tokens..."></textarea>
 
     <div class="grid">
         <div><span class="label">Invite</span><input type="text" id="invite" placeholder="xxxx"></div>
         <div><span class="label">Guild ID</span><input type="text" id="guild_id" placeholder="ID"></div>
-        <div><span class="label">Msg URL</span><input type="text" id="msg_url" placeholder="https://..."></div>
+        <div><span class="label">Msg URL</span><input type="text" id="msg_url" placeholder="URL"></div>
     </div>
 
     <div id="captcha-area">
         <div id="captcha-box"></div>
+        <div id="captcha-status" style="font-size: 10px; color: var(--primary); margin-top: 10px;">Waiting for solution...</div>
     </div>
 
     <div class="btn-group">
@@ -61,9 +62,8 @@
     function addLog(msg, type = '') {
         const div = document.createElement('div');
         div.className = `entry ${type}`;
-        div.innerHTML = `<span class="time">${new Date().toLocaleTimeString()}</span> <span>${msg}</span>`;
-        const logArea = document.getElementById('logArea');
-        logArea.prepend(div);
+        div.innerHTML = `<span style="opacity:0.3">[${new Date().toLocaleTimeString()}]</span> <span>${msg}</span>`;
+        document.getElementById('logArea').prepend(div);
     }
 
     const getSP = () => btoa(JSON.stringify({
@@ -76,7 +76,6 @@
         const gId = document.getElementById('guild_id').value.trim();
         const msgUrl = document.getElementById('msg_url').value.trim();
         const label = token.substring(0,8);
-
         if (gId) {
             await fetch(`${PROXY}/api/v9/guilds/${gId}/onboarding-responses`, {
                 method: 'POST', headers: { "authorization": token, "content-type": "application/json" },
@@ -84,7 +83,6 @@
             });
             addLog(`[${label}] Onboarding OK`, 'sc');
         }
-
         if (msgUrl) {
             try {
                 const p = msgUrl.split('/');
@@ -99,15 +97,19 @@
                             body: JSON.stringify({ type: 3, guild_id: mGId, channel_id: cId, message_id: mId, application_id: data.author.id, data: { component_type: 2, custom_id: b.custom_id } })
                         });
                     }
-                    addLog(`[${label}] Interactions OK`, 'sc');
+                    addLog(`[${label}] Interaction OK`, 'sc');
                 }
-            } catch (e) { addLog(`[${label}] Bypass Failed`, 'er'); }
+            } catch (e) { addLog(`[${label}] Interaction Failed`, 'er'); }
         }
     }
 
     async function requestJoin(token, invite, key = null, rq = null) {
-        const xfRes = await fetch(`${PROXY}/experiments`, { headers: { "x-super-properties": getSP() } });
-        const xf = xfRes.ok ? (await xfRes.json()).fingerprint : null;
+        // Fingerprint取得
+        let xf = null;
+        try {
+            const xfRes = await fetch(`${PROXY}/experiments`, { headers: { "x-super-properties": getSP() } });
+            if (xfRes.ok) xf = (await xfRes.json()).fingerprint;
+        } catch(e) { console.error("Fingerprint Error"); }
 
         const headers = {
             "authorization": token, "content-type": "application/json",
@@ -121,65 +123,82 @@
                 method: "POST", headers: headers, body: JSON.stringify({ session_id: crypto.randomUUID() })
             });
             const data = await res.json();
-            if (res.status === 400 && data.captcha_sitekey) return { status: 'CAPTCHA', data };
-            return { status: res.ok ? 'OK' : 'FAIL' };
+            
+            if (res.status === 400 && data.captcha_sitekey) {
+                return { status: 'CAPTCHA', data };
+            }
+            if (res.ok) return { status: 'OK' };
+            
+            addLog(`[${token.substring(0,8)}] Rejected: ${res.status}`, 'er');
+            return { status: 'FAIL' };
         } catch (e) { return { status: 'ERROR' }; }
     }
 
     function renderCaptcha() {
         if (!capQueue.length) { document.getElementById('captcha-area').style.display = 'none'; return; }
-        document.getElementById('captcha-area').style.display = 'flex';
-        const item = capQueue[0];
-        document.getElementById('captcha-box').innerHTML = '';
         
-        setTimeout(() => {
-            hcaptcha.render("captcha-box", {
+        const area = document.getElementById('captcha-area');
+        area.style.display = 'flex';
+        const item = capQueue[0];
+        const box = document.getElementById('captcha-box');
+        box.innerHTML = '';
+        
+        // hcaptchaオブジェクトが存在するか確認
+        if (typeof hcaptcha === 'undefined') {
+            addLog("hCaptcha library not loaded. Retrying...", "er");
+            setTimeout(renderCaptcha, 1000);
+            return;
+        }
+
+        try {
+            hcaptcha.render(box, {
                 sitekey: item.info.captcha_sitekey,
-                rqdata: item.info.captcha_rqdata, // 重要な修正: rqdataを渡す
+                rqdata: item.info.captcha_rqdata,
+                theme: 'dark',
                 callback: async (key) => {
+                    addLog(`[${item.token.substring(0,8)}] Captcha Solved. Sending...`, "in");
                     const res = await requestJoin(item.token, item.invite, key, item.info.captcha_rqtoken);
                     if (res.status === 'OK') {
                         addLog(`[${item.token.substring(0,8)}] Join Success`, 'sc');
                         await bypass(item.token);
-                    } else {
-                        addLog(`[${item.token.substring(0,8)}] Failed to Join`, 'er');
                     }
                     capQueue.shift();
                     renderCaptcha();
                 }
             });
-        }, 50);
+        } catch (e) {
+            addLog("Render Error. Moving to next token.", "er");
+            capQueue.shift();
+            renderCaptcha();
+        }
     }
 
-    window.onload = () => {
-        document.getElementById('execJoin').onclick = async () => {
-            const tks = document.getElementById('tokens').value.split('\n').map(t => t.trim()).filter(t => t);
-            let inv = document.getElementById('invite').value.trim();
-            if (inv.includes('/')) inv = inv.split('/').pop();
-            if (!tks.length || !inv) return;
+    document.getElementById('execJoin').onclick = async () => {
+        const tks = document.getElementById('tokens').value.split('\n').map(t => t.trim()).filter(t => t);
+        let inv = document.getElementById('invite').value.trim().split('/').pop();
+        if (!tks.length || !inv) return;
 
-            addLog("Starting Join sequence...", "in");
-            for (const t of tks) {
-                const res = await requestJoin(t, inv);
-                if (res.status === 'OK') {
-                    addLog(`[${t.substring(0,8)}] Join Success`, 'sc');
-                    await bypass(t);
-                } else if (res.status === 'CAPTCHA') {
-                    addLog(`[${t.substring(0,8)}] Captcha required`, 'in');
-                    capQueue.push({ token: t, invite: inv, info: res.data });
-                    if (capQueue.length === 1) renderCaptcha();
-                }
+        addLog("Initializing...", "in");
+        for (const t of tks) {
+            const res = await requestJoin(t, inv);
+            if (res.status === 'OK') {
+                addLog(`[${t.substring(0,8)}] Join Success`, 'sc');
+                await bypass(t);
+            } else if (res.status === 'CAPTCHA') {
+                addLog(`[${t.substring(0,8)}] Captcha Triggered`, 'in');
+                capQueue.push({ token: t, invite: inv, info: res.data });
+                if (capQueue.length === 1) renderCaptcha();
             }
-        };
-
-        document.getElementById('execBypass').onclick = async () => {
-            const tks = document.getElementById('tokens').value.split('\n').map(t => t.trim()).filter(t => t);
-            addLog("Starting Bypass sequence...", "in");
-            for (const t of tks) await bypass(t);
-        };
+        }
     };
 
-    function onCaptchaLoad() { addLog("System Ready", "in"); }
+    document.getElementById('execBypass').onclick = async () => {
+        const tks = document.getElementById('tokens').value.split('\n').map(t => t.trim()).filter(t => t);
+        for (const t of tks) await bypass(t);
+    };
+
+    // グローバルな読み込み完了関数
+    window.onCaptchaLoad = () => { addLog("System Ready", "in"); };
 </script>
 </body>
 </html>
