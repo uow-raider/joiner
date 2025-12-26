@@ -10,7 +10,7 @@
         body { font-family: sans-serif; background: var(--bg); color: var(--text); display: flex; justify-content: center; padding: 20px; margin: 0; }
         .container { width: 100%; max-width: 800px; background: var(--card); padding: 30px; border-radius: 8px; border: 1px solid var(--border); }
         header { text-align: center; margin-bottom: 25px; border-bottom: 1px solid var(--border); padding-bottom: 15px; }
-        h1 { margin: 0; font-size: 22px; font-weight: 800; letter-spacing: 2px; color: var(--primary); text-transform: uppercase; }
+        h1 { margin: 0; font-size: 24px; font-weight: 800; letter-spacing: 3px; color: var(--primary); text-transform: uppercase; }
         .label { display: block; font-size: 11px; margin-bottom: 5px; color: var(--primary); font-weight: bold; }
         textarea, input { width: 100%; padding: 12px; background: #080814; border: 1px solid var(--border); border-radius: 4px; color: #fff; box-sizing: border-box; outline: none; font-family: monospace; font-size: 13px; margin-bottom: 15px; }
         .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
@@ -19,6 +19,7 @@
         .btn { padding: 15px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; transition: 0.2s; text-transform: uppercase; }
         .btn-p { background: var(--primary); color: #000; }
         .btn-s { background: transparent; border: 1px solid var(--border); color: #fff; }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
         .log { background: #05050f; border: 1px solid var(--border); border-radius: 4px; height: 250px; overflow-y: auto; padding: 12px; font-size: 12px; font-family: monospace; margin-top: 20px; }
         .entry { margin-bottom: 4px; display: flex; gap: 8px; border-bottom: 1px solid rgba(255,255,255,0.02); }
         .success { color: #00ffa3; } .error { color: #ff0055; } .info { color: var(--primary); }
@@ -30,12 +31,12 @@
     <header><h1>NOVA tool</h1></header>
 
     <span class="label">Tokens</span>
-    <textarea id="tokens" placeholder="1行に1つトークンを入力..."></textarea>
+    <textarea id="tokens" placeholder="トークンを入力..."></textarea>
 
     <div class="grid">
         <div><span class="label">Invite Code</span><input type="text" id="invite" placeholder="xxxx"></div>
-        <div><span class="label">Guild ID</span><input type="text" id="guild_id" placeholder="サーバーID"></div>
-        <div><span class="label">Message URL</span><input type="text" id="msg_url" placeholder="URL"></div>
+        <div><span class="label">Guild ID</span><input type="text" id="guild_id" placeholder="12345..."></div>
+        <div><span class="label">Message URL</span><input type="text" id="msg_url" placeholder="https://..."></div>
     </div>
 
     <div id="captcha-container">
@@ -77,28 +78,28 @@
             });
         }
         if (msgUrl) {
-            const p = msgUrl.split('/');
-            const cId = p[p.length-2], mId = p[p.length-1], mGId = p[p.length-3];
-            const res = await fetch(`${PROXY}/api/v9/channels/${cId}/messages/${mId}`, { headers: { "authorization": token } });
-            if (res.ok) {
-                const data = await res.json();
-                const btns = []; (data.components || []).forEach(row => row.components.forEach(c => { if(c.type===2) btns.push(c) }));
-                for (let b of btns) {
-                    await fetch(`${PROXY}/api/v9/interactions`, {
-                        method: 'POST', headers: { "authorization": token, "content-type": "application/json" },
-                        body: JSON.stringify({ type: 3, guild_id: mGId, channel_id: cId, message_id: mId, application_id: data.author.id, data: { component_type: 2, custom_id: b.custom_id } })
-                    });
+            try {
+                const p = msgUrl.split('/');
+                const cId = p[p.length-2], mId = p[p.length-1], mGId = p[p.length-3];
+                const res = await fetch(`${PROXY}/api/v9/channels/${cId}/messages/${mId}`, { headers: { "authorization": token } });
+                if (res.ok) {
+                    const data = await res.json();
+                    const btns = []; (data.components || []).forEach(row => row.components.forEach(c => { if(c.type===2) btns.push(c) }));
+                    for (let b of btns) {
+                        await fetch(`${PROXY}/api/v9/interactions`, {
+                            method: 'POST', headers: { "authorization": token, "content-type": "application/json" },
+                            body: JSON.stringify({ type: 3, guild_id: mGId, channel_id: cId, message_id: mId, application_id: data.author.id, data: { component_type: 2, custom_id: b.custom_id } })
+                        });
+                    }
+                    addLog(`[${token.substring(0,8)}] 認証突破完了`, 'success');
                 }
-                addLog(`[${token.substring(0,8)}] 認証突破成功`, 'success');
-            }
+            } catch (e) {}
         }
     }
 
     async function tryJoin(token, invite, key = null, rq = null) {
-        // 常に最新のFingerprintを取得
         const xfRes = await fetch(`${PROXY}/experiments`, { headers: { "x-super-properties": getSP() } });
         const xf = xfRes.ok ? (await xfRes.json()).fingerprint : null;
-
         const headers = {
             "authorization": token, "content-type": "application/json",
             "x-super-properties": getSP(), "x-fingerprint": xf,
@@ -122,7 +123,6 @@
         const item = queue[0];
         document.getElementById('captcha-box').innerHTML = '';
         
-        // rqdataの即時反映
         setTimeout(() => {
             hcaptcha.render("captcha-box", {
                 sitekey: item.info.captcha_sitekey,
@@ -142,27 +142,33 @@
         }, 50);
     }
 
-    document.getElementById('execJoin').addEventListener('click', async () => {
-        const tks = document.getElementById('tokens').value.split('\n').map(t => t.trim()).filter(t => t);
-        const inv = document.getElementById('invite').value.trim().split('/').pop();
-        if (!tks.length || !inv) return;
+    // ボタンが押せなくなる問題を修正するため、確実に読み込まれてからリスナーを登録
+    window.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('execJoin').addEventListener('click', async () => {
+            const tks = document.getElementById('tokens').value.split('\n').map(t => t.trim()).filter(t => t);
+            const inv = document.getElementById('invite').value.trim().split('/').pop();
+            if (!tks.length || !inv) return;
 
-        for (const t of tks) {
-            const res = await tryJoin(t, inv);
-            if (res.status === 'OK') {
-                addLog(`[${t.substring(0,8)}] 参加成功`, 'success');
-                await fullBypass(t);
-            } else if (res.status === 'CAPTCHA') {
-                addLog(`[${t.substring(0,8)}] 認証待機`, 'info');
-                queue.push({ token: t, invite: inv, info: res.data });
-                if (queue.length === 1) renderCap();
+            addLog("処理開始...", 'info');
+            for (const t of tks) {
+                const res = await tryJoin(t, inv);
+                if (res.status === 'OK') {
+                    addLog(`[${t.substring(0,8)}] 参加成功`, 'success');
+                    await fullBypass(t);
+                } else if (res.status === 'CAPTCHA') {
+                    addLog(`[${t.substring(0,8)}] 認証待機中`, 'info');
+                    queue.push({ token: t, invite: inv, info: res.data });
+                    if (queue.length === 1) renderCap();
+                }
             }
-        }
-    });
+        });
 
-    document.getElementById('execBypass').addEventListener('click', async () => {
-        const tks = document.getElementById('tokens').value.split('\n').map(t => t.trim()).filter(t => t);
-        for (const t of tks) await fullBypass(t);
+        document.getElementById('execBypass').addEventListener('click', async () => {
+            const tks = document.getElementById('tokens').value.split('\n').map(t => t.trim()).filter(t => t);
+            if (!tks.length) return;
+            addLog("突破操作のみ開始...", 'info');
+            for (const t of tks) await fullBypass(t);
+        });
     });
 
     function onCaptchaLoad() { addLog("NOVA tool Ready", 'info'); }
