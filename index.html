@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NOVA Tool - Hybrid Edition</title>
+    <title>NOVA Tool - Ultra Hybrid</title>
     <script src="https://js.hcaptcha.com/1/api.js?render=explicit" async defer></script>
     <style>
         :root {
@@ -12,71 +12,21 @@
             --text-color: #f0f0f5;
             --primary: #00d4ff;
             --secondary: #7000ff;
-            --danger: #ff0055;
             --success: #00ffa3;
+            --danger: #ff0055;
             --border: #2e2e4a;
         }
-
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            display: flex;
-            justify-content: center;
-            padding: 20px;
-            margin: 0;
-        }
-
-        .container {
-            width: 100%;
-            max-width: 700px;
-            background: var(--card-bg);
-            padding: 30px;
-            border-radius: 16px;
-            box-shadow: 0 0 40px rgba(0, 212, 255, 0.2);
-            border: 1px solid var(--border);
-        }
-
+        body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg-color); color: var(--text-color); display: flex; justify-content: center; padding: 20px; margin: 0; }
+        .container { width: 100%; max-width: 700px; background: var(--card-bg); padding: 30px; border-radius: 16px; border: 1px solid var(--border); box-shadow: 0 0 40px rgba(0, 212, 255, 0.2); }
         header { text-align: center; margin-bottom: 25px; }
-        .brand-title { 
-            margin: 0; font-size: 32px; font-weight: 900; letter-spacing: 6px; 
-            color: var(--primary); text-shadow: 0 0 20px rgba(0, 212, 255, 0.6);
-            text-transform: uppercase;
-        }
-
+        .brand-title { margin: 0; font-size: 32px; font-weight: 900; letter-spacing: 6px; color: var(--primary); text-transform: uppercase; }
         .section { margin-bottom: 15px; }
-        label { display: block; font-size: 11px; margin-bottom: 5px; color: var(--primary); font-weight: bold; text-transform: uppercase; }
-
-        textarea, input[type="text"] {
-            width: 100%; padding: 12px; background: #050510; border: 1px solid var(--border);
-            border-radius: 8px; color: white; box-sizing: border-box; outline: none;
-            font-family: 'Consolas', monospace; font-size: 13px;
-        }
-
+        label { display: block; font-size: 11px; margin-bottom: 5px; color: var(--primary); font-weight: bold; }
+        textarea, input { width: 100%; padding: 12px; background: #050510; border: 1px solid var(--border); border-radius: 8px; color: white; box-sizing: border-box; font-family: 'Consolas', monospace; }
         textarea { height: 100px; }
-
-        /* Captcha Area */
-        #captcha-container {
-            margin: 20px 0;
-            padding: 15px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 8px;
-            display: none; /* Captchaが必要な時だけ表示 */
-            text-align: center;
-        }
-
-        .btn { 
-            width: 100%; padding: 18px; border: none; border-radius: 8px; 
-            font-weight: 900; cursor: pointer; text-transform: uppercase; transition: 0.2s; 
-            background: linear-gradient(90deg, var(--primary), var(--secondary)); color: #000;
-        }
-        .btn:hover { filter: brightness(1.2); }
-
-        .status-log {
-            margin-top: 20px; background: #050510; border: 1px solid var(--border);
-            border-radius: 8px; height: 200px; overflow-y: auto; padding: 12px;
-            font-size: 11px; font-family: 'Consolas', monospace; color: #aaa;
-        }
+        #captcha-container { margin: 20px 0; padding: 15px; background: rgba(255, 255, 255, 0.05); border-radius: 8px; display: none; text-align: center; }
+        .btn { width: 100%; padding: 18px; border: none; border-radius: 8px; font-weight: 900; cursor: pointer; background: linear-gradient(90deg, var(--primary), var(--secondary)); color: #000; text-transform: uppercase; }
+        .status-log { margin-top: 20px; background: #050510; border: 1px solid var(--border); border-radius: 8px; height: 200px; overflow-y: auto; padding: 12px; font-size: 11px; font-family: 'Consolas', monospace; }
         .log-entry { margin-bottom: 4px; }
         .log-success { color: var(--success); }
         .log-error { color: var(--danger); }
@@ -88,33 +38,33 @@
 <div class="container">
     <header>
         <h1 class="brand-title">NOVA TOOL</h1>
-        <p style="font-size: 10px; opacity: 0.6; text-align: center;">JOINER + BYPASS HYBRID</p>
+        <p style="font-size: 10px; opacity: 0.6;">ANTI-INVALIDATION HYBRID JOINER</p>
     </header>
 
     <div class="section">
-        <label>User Tokens (1行に1つ)</label>
-        <textarea id="tokens" placeholder="Tokens here..."></textarea>
+        <label>USER TOKENS</label>
+        <textarea id="tokens" placeholder="Enter tokens (one per line)..."></textarea>
     </div>
 
     <div class="section">
-        <label>Invite Link / Code</label>
+        <label>INVITE LINK / CODE</label>
         <input type="text" id="inviteInput" placeholder="https://discord.gg/xxxxxx">
     </div>
 
     <div class="section">
-        <label>Target Message URL (リアクション/ボタン実行用)</label>
+        <label>TARGET MESSAGE URL (FOR REACTIONS & BUTTONS)</label>
         <input type="text" id="msgUrl" placeholder="https://discord.com/channels/GUILD/CHANNEL/MSG">
     </div>
 
     <div id="captcha-container">
-        <p id="captcha-status" style="font-size: 12px; color: var(--primary); margin-bottom: 10px;">CAPTCHA REQUIRED</p>
+        <p id="captcha-status" style="font-size: 12px; color: var(--primary); margin-bottom: 10px;">CAPTCHA REQUIRED - PLEASE SOLVE</p>
         <div id="captcha-box"></div>
     </div>
 
-    <button id="startBtn" class="btn">Execute Full Sequence</button>
+    <button id="startBtn" class="btn">Execute Secure Sequence</button>
 
     <div class="status-log" id="logArea">
-        <div class="log-entry">[SYSTEM] NOVA online. Standby.</div>
+        <div class="log-entry">[SYSTEM] NOVA online. Standby for commands.</div>
     </div>
 </div>
 
@@ -122,42 +72,66 @@
     let captchaQueue = [];
     let isProcessingCaptcha = false;
 
-    const logArea = document.getElementById('logArea');
-    function addLog(text, type = '') {
+    // --- Utility Functions ---
+    const addLog = (text, type = '') => {
         const div = document.createElement('div');
         div.className = `log-entry ${type ? 'log-' + type : ''}`;
         div.innerText = `[${new Date().toLocaleTimeString()}] ${text}`;
-        logArea.prepend(div);
-    }
+        document.getElementById('logArea').prepend(div);
+    };
 
-    // --- Core Logic ---
+    const createUUID = () => {
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+            const r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+        });
+    };
+
+    // 人間に見せかけるためのSuperProperties
+    const getSuperProperties = () => {
+        const props = {
+            "os": "Windows", "browser": "Chrome", "device": "", "system_locale": "ja-JP",
+            "browser_user_agent": navigator.userAgent, "browser_version": "120.0.0.0",
+            "os_version": "10", "referrer": "", "referring_domain": "",
+            "release_channel": "stable", "client_build_number": 255100, "client_event_source": null
+        };
+        return btoa(JSON.stringify(props));
+    };
+
+    // --- Main Logic ---
     document.getElementById('startBtn').addEventListener('click', async () => {
         const tokens = document.getElementById('tokens').value.split('\n').filter(t => t.trim());
-        const invite = document.getElementById('inviteInput').value.trim().split('/').pop();
-        
-        if (!tokens.length || !invite) return alert("トークンと招待コードを入力してください");
+        const inviteCode = document.getElementById('inviteInput').value.trim().split('/').pop();
+
+        if (!tokens.length || !inviteCode) return alert("必要事項を入力してください");
 
         addLog("シーケンス開始...", "info");
 
         for (const token of tokens) {
-            await attemptJoin(token.trim(), invite);
+            await attemptJoin(token.trim(), inviteCode);
+            // 連続送信によるBANを防ぐための短い遅延
+            await new Promise(r => setTimeout(r, 1500));
         }
     });
 
     async function attemptJoin(token, inviteCode) {
+        const sessionId = createUUID(); // セッションIDを固定
         try {
-            // 注意: ブラウザから直接叩くとCORS制限がかかるため、本来はproxyを介します
             const res = await fetch(`https://discord-api.soyaaaaana.com/invite/${inviteCode}`, {
                 method: "POST",
-                headers: { "Authorization": token, "Content-Type": "application/json" },
-                body: JSON.stringify({ session_id: Math.random().toString(36).substring(2) })
+                headers: { 
+                    "Authorization": token, 
+                    "Content-Type": "application/json",
+                    "X-Super-Properties": getSuperProperties()
+                },
+                body: JSON.stringify({ session_id: sessionId })
             });
 
             const data = await res.json();
 
             if (res.status === 400 && data.captcha_sitekey) {
                 addLog(`Captcha検知: ${token.substring(0,10)}...`, "info");
-                captchaQueue.push({ token, inviteCode, ...data });
+                captchaQueue.push({ token, inviteCode, sessionId, ...data });
                 if (!isProcessingCaptcha) processNextCaptcha();
             } else if (res.ok) {
                 addLog(`参加成功: ${token.substring(0,10)}...`, "success");
@@ -165,28 +139,23 @@
             } else {
                 addLog(`エラー: ${res.status}`, "error");
             }
-        } catch (e) {
-            addLog("通信エラー", "error");
-        }
+        } catch (e) { addLog("通信エラー", "error"); }
     }
 
-    // --- Captcha Handling ---
     function processNextCaptcha() {
         if (captchaQueue.length === 0) {
             isProcessingCaptcha = false;
             document.getElementById('captcha-container').style.display = 'none';
-            addLog("すべてのCaptcha処理が終了しました", "success");
             return;
         }
-
         isProcessingCaptcha = true;
         const current = captchaQueue[0];
         document.getElementById('captcha-container').style.display = 'block';
         
         hcaptcha.render("captcha-box", {
             sitekey: current.captcha_sitekey,
-            callback: async (token) => {
-                await submitCaptcha(token);
+            callback: async (key) => {
+                await submitCaptcha(key);
                 hcaptcha.reset();
                 processNextCaptcha();
             }
@@ -195,26 +164,28 @@
 
     async function submitCaptcha(captchaKey) {
         const current = captchaQueue.shift();
-        const res = await fetch(`https://discord-api.soyaaaaana.com/invite/${current.inviteCode}`, {
-            method: "POST",
-            headers: {
-                "Authorization": current.token,
-                "x-captcha-key": captchaKey,
-                "x-captcha-rqtoken": current.captcha_rqtoken,
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ session_id: Math.random().toString(36).substring(2) })
-        });
+        try {
+            const res = await fetch(`https://discord-api.soyaaaaana.com/invite/${current.inviteCode}`, {
+                method: "POST",
+                headers: {
+                    "Authorization": current.token,
+                    "x-captcha-key": captchaKey,
+                    "x-captcha-rqtoken": current.captcha_rqtoken,
+                    "X-Super-Properties": getSuperProperties(),
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ session_id: current.sessionId }) // 同一セッションIDを使用
+            });
 
-        if (res.ok) {
-            addLog(`Captcha突破・参加成功`, "success");
-            await executeBypass(current.token);
-        } else {
-            addLog(`Captcha後エラー: ${res.status}`, "error");
-        }
+            if (res.ok) {
+                addLog(`Captcha突破成功`, "success");
+                await executeBypass(current.token);
+            } else {
+                addLog(`Captcha後エラー: ${res.status}`, "error");
+            }
+        } catch (e) { addLog("送信エラー", "error"); }
     }
 
-    // --- Bypass Actions (Reaction & Buttons) ---
     async function executeBypass(token) {
         const msgUrl = document.getElementById('msgUrl').value.trim();
         if (!msgUrl) return;
@@ -222,8 +193,18 @@
         const parts = msgUrl.split('/');
         const gId = parts[parts.length - 3], cId = parts[parts.length - 2], mId = parts[parts.length - 1];
 
+        // 1. メンバーシップ申請（ルール同意）の送信
+        await fetch(`https://discord.com/api/v9/guilds/${gId}/requests/@me`, {
+            method: 'PUT',
+            headers: { "Authorization": token, "Content-Type": "application/json", "X-Super-Properties": getSuperProperties() },
+            body: JSON.stringify({ termsofservice: true })
+        });
+        addLog("ルール同意完了", "success");
+
+        await new Promise(r => setTimeout(r, 1000));
+
+        // 2. メッセージ取得 & リアクション・ボタン
         try {
-            // メッセージ取得
             const res = await fetch(`https://discord.com/api/v9/channels/${cId}/messages/${mId}`, {
                 headers: { "Authorization": token }
             });
@@ -237,10 +218,9 @@
                         method: 'PUT', headers: { "Authorization": token }
                     });
                 }
-                addLog(`リアクション完了`, "success");
             }
 
-            // ボタン
+            // ボタン実行
             const buttons = [];
             (data.components || []).forEach(row => row.components.forEach(c => { if(c.type === 2) buttons.push(c); }));
             for (const btn of buttons) {
@@ -253,13 +233,9 @@
                     })
                 });
             }
-            if (buttons.length) addLog(`ボタン実行完了`, "success");
-
-        } catch (e) {
-            addLog("バイパス処理失敗", "error");
-        }
+            addLog("アクション完了", "success");
+        } catch (e) { addLog("アクション失敗", "error"); }
     }
 </script>
-
 </body>
 </html>
