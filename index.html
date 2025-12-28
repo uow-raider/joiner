@@ -2,115 +2,294 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>NOVA Tool - Captcha Fix</title>
-    <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NOVA tool - Bypass Only</title>
     <style>
-        :root { --bg: #0d0d15; --card: #1a1a2e; --primary: #00d4ff; --text: #f0f0f5; --border: #2e2e4a; }
-        body { background: var(--bg); color: var(--text); font-family: sans-serif; display: flex; justify-content: center; padding: 20px; }
-        .container { width: 100%; max-width: 600px; background: var(--card); padding: 25px; border-radius: 12px; border: 1px solid var(--border); }
-        .log-area { margin-top: 15px; height: 150px; background: #000; border: 1px solid var(--border); padding: 10px; overflow-y: auto; font-size: 11px; color: #00ffa3; }
-        #captcha-box { margin-top: 20px; min-height: 300px; display: flex; justify-content: center; align-items: center; background: rgba(0,0,0,0.2); border-radius: 8px; }
-        .input-group { margin-bottom: 10px; }
-        input, textarea { width: 100%; padding: 10px; background: #050510; border: 1px solid var(--border); color: #fff; box-sizing: border-box; }
-        .btn { width: 100%; padding: 15px; background: var(--primary); color: #000; border: none; font-weight: bold; cursor: pointer; }
+        :root {
+            --bg-color: #0d0d15;
+            --card-bg: #1a1a2e;
+            --text-color: #f0f0f5;
+            --primary: #00d4ff;
+            --secondary: #7000ff;
+            --danger: #ff0055;
+            --success: #00ffa3;
+            --warning: #ffa500;
+            --border: #2e2e4a;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+            margin: 0;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 650px;
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 0 40px rgba(0, 212, 255, 0.2);
+            border: 1px solid var(--border);
+            position: relative;
+        }
+
+        /* Language Toggle */
+        .lang-switcher {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+        .lang-btn {
+            background: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        header { text-align: center; margin-bottom: 25px; }
+        .brand-title { 
+            margin: 0; font-size: 32px; font-weight: 900; letter-spacing: 6px; 
+            color: var(--primary); text-shadow: 0 0 20px rgba(0, 212, 255, 0.6);
+            text-transform: uppercase;
+        }
+        .subtitle { font-size: 12px; text-transform: uppercase; opacity: 0.7; letter-spacing: 4px; font-weight: bold; }
+
+        .section { margin-bottom: 15px; }
+        label { display: block; font-size: 10px; margin-bottom: 5px; color: var(--primary); font-weight: bold; text-transform: uppercase; }
+
+        textarea, input[type="text"] {
+            width: 100%; padding: 12px; background: #050510; border: 1px solid var(--border);
+            border-radius: 8px; color: white; box-sizing: border-box; outline: none;
+            font-family: 'Consolas', monospace; font-size: 13px;
+        }
+
+        textarea { height: 120px; }
+        textarea.masked { -webkit-text-security: disc !important; }
+        
+        .grid-inputs { display: grid; grid-template-columns: 1fr; gap: 15px; }
+
+        .stats-grid {
+            display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;
+            margin: 15px 0; text-align: center;
+        }
+        .stat-box { background: rgba(0,0,0,0.5); padding: 12px; border-radius: 10px; border: 1px solid var(--border); }
+        .stat-box span { font-size: 9px; opacity: 0.6; display: block; }
+        .stat-box strong { font-size: 24px; font-family: 'Consolas', monospace; display: block; }
+
+        .btn { 
+            width: 100%; padding: 20px; border: none; border-radius: 8px; 
+            font-weight: 900; cursor: pointer; text-transform: uppercase; transition: 0.2s; 
+            font-size: 14px; letter-spacing: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary)); color: #000;
+        }
+        .btn:hover { filter: brightness(1.2); transform: scale(1.01); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .status-log {
+            margin-top: 20px; background: #050510; border: 1px solid var(--border);
+            border-radius: 8px; height: 250px; overflow-y: auto; padding: 12px;
+            font-size: 11px; font-family: 'Consolas', monospace;
+        }
+        .log-entry { margin-bottom: 4px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 2px; }
+        .log-success { color: var(--success); }
+        .log-error { color: var(--danger); }
+        .log-info { color: var(--primary); }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>NOVA Tool - Captcha Repair</h2>
-    <div class="input-group"><textarea id="tokens" placeholder="Tokens (1 per line)"></textarea></div>
-    <div class="input-group"><input type="text" id="invite" placeholder="Invite Code (e.g. xxxxx)"></div>
-    <button id="start" class="btn">START</button>
-    <div id="captcha-box"></div>
-    <div id="log" class="log-area"></div>
+    <div class="lang-switcher">
+        <button id="langBtn" class="lang-btn">ENGLISH</button>
+    </div>
+
+    <header>
+        <h1 class="brand-title">NOVA TOOL</h1>
+        <p class="subtitle">Bypass Automation</p>
+    </header>
+
+    <div class="section">
+        <label id="lblTokens">User Tokens (ユーザートークン)</label>
+        <textarea id="tokens" class="masked" placeholder="Token list..."></textarea>
+    </div>
+
+    <div class="grid-inputs">
+        <div class="section">
+            <label id="lblGuild">Server ID (オンボーディング突破用サーバーID)</label>
+            <input type="text" id="guildIdInput" placeholder="1234567890">
+        </div>
+        <div class="section">
+            <label id="lblMsg">Target Message URL (リアクション/ボタン認証用URL)</label>
+            <input type="text" id="msgUrl" placeholder="https://discord.com/channels/GUILD/CHANNEL/MSG">
+        </div>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-box"><span id="lblStatDone">COMPLETED</span><strong id="countSuccess" style="color:var(--success)">0</strong></div>
+        <div class="stat-box"><span id="lblStatTotal">TOTAL TOKENS</span><strong id="countTotal">0</strong></div>
+    </div>
+
+    <button id="startBtn" class="btn">Execute Full Bypass</button>
+
+    <div class="status-log" id="logArea">
+        <div class="log-entry"><span id="lblLogReady">[SYSTEM] NOVA online. Standby for bypass commands.</span></div>
+    </div>
 </div>
 
 <script>
-let queue = [];
-let processing = false;
-
-function log(msg) {
-    const l = document.getElementById("log");
-    l.innerText += `\n[${new Date().toLocaleTimeString()}] ${msg}`;
-    l.scrollTop = l.scrollHeight;
-}
-
-// ブラウザの情報を偽装
-function getProps() {
-    return btoa(JSON.stringify({"os":"Windows","browser":"Chrome","device":"","system_locale":"ja-JP","client_build_number":255100}));
-}
-
-document.getElementById("start").addEventListener("click", async () => {
-    const tokens = document.getElementById("tokens").value.split("\n").filter(t => t.trim());
-    const invite = document.getElementById("invite").value.trim().split("/").pop();
-    
-    for (const token of tokens) {
-        await join(token.trim(), invite);
-    }
-});
-
-async function join(token, invite, capKey = null, capData = null) {
-    const headers = {
-        "authorization": token,
-        "content-type": "application/json",
-        "x-super-properties": getProps()
+    let currentLang = 'jp';
+    const translations = {
+        en: {
+            tokens: "User Tokens",
+            guild: "Server ID (For Onboarding)",
+            msg: "Target Message URL (For Reaction/Button)",
+            statDone: "COMPLETED",
+            statTotal: "TOTAL TOKENS",
+            btnStart: "Execute Full Bypass",
+            logReady: "[SYSTEM] NOVA online. Standby for bypass commands.",
+            logStart: "Initiating bypass sequence...",
+            logOnboard: "ONBOARDING: Skipped",
+            logReact: "REACTION: Applied",
+            logButton: "BUTTON: Executed",
+            logNoInteract: "MSG: No interactive elements found",
+            logError: "ERROR: Access failed",
+            logTerminated: "Sequence complete."
+        },
+        jp: {
+            tokens: "ユーザートークン (1行に1つ)",
+            guild: "サーバーID (オンボーディング突破用)",
+            msg: "ターゲットメッセージURL (認証突破用)",
+            statDone: "完了数",
+            statTotal: "合計トークン数",
+            btnStart: "一斉突破シーケンス開始",
+            logReady: "[SYSTEM] NOVA オンライン。待機中...",
+            logStart: "突破シーケンスを開始します...",
+            logOnboard: "オンボーディング突破完了",
+            logReact: "リアクション付与完了",
+            logButton: "ボタン実行完了",
+            logNoInteract: "メッセージ内に認証要素がありません",
+            logError: "エラー: アクセスできません",
+            logTerminated: "すべての処理が終了しました。"
+        }
     };
-    if (capKey) {
-        headers["x-captcha-key"] = capKey;
-        headers["x-captcha-rqtoken"] = capData.rqtoken;
+
+    function updateLang() {
+        const t = translations[currentLang];
+        document.getElementById('lblTokens').innerText = t.tokens;
+        document.getElementById('lblGuild').innerText = t.guild;
+        document.getElementById('lblMsg').innerText = t.msg;
+        document.getElementById('lblStatDone').innerText = t.statDone;
+        document.getElementById('lblStatTotal').innerText = t.statTotal;
+        document.getElementById('startBtn').innerText = t.btnStart;
+        document.getElementById('langBtn').innerText = currentLang === 'en' ? '日本語' : 'ENGLISH';
     }
 
-    try {
-        const res = await fetch(`https://discord-api.soyaaaaana.com/invite/${invite}`, {
-            method: "POST",
-            headers: headers,
-            body: JSON.stringify({ session_id: Math.random().toString(36).substring(2) })
-        });
-
-        const data = await res.json();
-        if (res.status === 400 && data.captcha_sitekey) {
-            log("Captchaが必要なトークンを検知...");
-            queue.push({ token, invite, ...data });
-            if (!processing) next();
-        } else if (res.ok) {
-            log("参加成功！");
-        } else {
-            log(`エラー: ${res.status}`);
-        }
-    } catch (e) { log("エラーが発生しました"); }
-}
-
-function next() {
-    if (queue.length === 0) {
-        processing = false;
-        log("全ての処理が完了しました");
-        return;
-    }
-    processing = true;
-    const current = queue[0];
-    const box = document.getElementById("captcha-box");
-    
-    // 重要：既存のウィジェットを完全に削除
-    box.innerHTML = '<div id="hcaptcha-target"></div>';
-
-    // hCaptchaを明示的にレンダリング
-    const widgetId = hcaptcha.render("hcaptcha-target", {
-        sitekey: current.captcha_sitekey,
-        callback: async (key) => {
-            log("Captcha解決を送信中...");
-            const task = queue.shift();
-            // 解決後に再試行
-            await join(task.token, task.invite, key, { rqtoken: task.captcha_rqtoken });
-            next(); // 次のCaptchaへ
-        }
+    document.getElementById('langBtn').addEventListener('click', () => {
+        currentLang = currentLang === 'en' ? 'jp' : 'en';
+        updateLang();
     });
 
-    // rqdataを即座に適用（これが400エラーを防ぐ）
-    if (current.captcha_rqdata) {
-        hcaptcha.setData(widgetId, { rqdata: current.captcha_rqdata });
+    const logArea = document.getElementById('logArea');
+    function addLog(key, type = '', num = null) {
+        const text = translations[currentLang][key] || key;
+        const div = document.createElement('div');
+        div.className = 'log-entry';
+        const time = new Date().toLocaleTimeString([], { hour12: false });
+        div.innerHTML = `<span style="color:#444">[${time}]</span> <span class="log-${type}">${num ? `[${num}] ` : ''}${text}</span>`;
+        logArea.prepend(div);
     }
-}
+
+    async function bypassOnboarding(t, num, gId) {
+        if (!gId) return;
+        try {
+            await fetch(`https://discord.com/api/v9/guilds/${gId}/onboarding-responses`, {
+                method: 'POST',
+                headers: { 'Authorization': t, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ onboarding_responses: [], onboarding_prompts_seen: {}, onboarding_responses_seen: {} })
+            });
+            addLog('logOnboard', 'success', num);
+        } catch (e) {}
+    }
+
+    async function processInteraction(t, num, gId, cId, mId) {
+        if (!cId || !mId) return;
+        try {
+            const res = await fetch(`https://discord.com/api/v9/channels/${cId}/messages/${mId}`, {
+                headers: { 'Authorization': t }
+            });
+            if (!res.ok) return addLog('logError', 'error', num);
+            
+            const data = await res.json();
+            let acted = false;
+
+            // Reactions
+            if (data.reactions?.length > 0) {
+                acted = true;
+                for (const r of data.reactions) {
+                    const emoji = r.emoji.id ? `${r.emoji.name}:${r.emoji.id}` : encodeURIComponent(r.emoji.name);
+                    await fetch(`https://discord.com/api/v9/channels/${cId}/messages/${mId}/reactions/${emoji}/@me`, {
+                        method: 'PUT', headers: { 'Authorization': t }
+                    });
+                }
+                addLog('logReact', 'success', num);
+            }
+
+            // Buttons
+            const buttons = [];
+            (data.components || []).forEach(row => row.components.forEach(c => { if(c.type === 2) buttons.push(c); }));
+            
+            if (buttons.length > 0) {
+                acted = true;
+                for (const btn of buttons) {
+                    await fetch(`https://discord.com/api/v9/interactions`, {
+                        method: 'POST',
+                        headers: { 'Authorization': t, 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            type: 3, guild_id: gId, channel_id: cId, message_id: mId,
+                            application_id: data.author.id, data: { component_type: 2, custom_id: btn.custom_id }
+                        })
+                    });
+                }
+                addLog('logButton', 'success', num);
+            }
+            if (!acted) addLog('logNoInteract', 'warn', num);
+        } catch (e) { addLog('logError', 'error', num); }
+    }
+
+    document.getElementById('startBtn').addEventListener('click', async () => {
+        const tokens = document.getElementById('tokens').value.split(/\r?\n/).filter(t => t.trim() !== "");
+        const gId = document.getElementById('guildIdInput').value.trim();
+        const msgUrl = document.getElementById('msgUrl').value.trim();
+        
+        if (!tokens.length) return;
+        
+        document.getElementById('countTotal').innerText = tokens.length;
+        document.getElementById('countSuccess').innerText = "0";
+        addLog('logStart', 'info');
+
+        let parts = msgUrl.split('/');
+        let mGId = parts[parts.length - 3], mCId = parts[parts.length - 2], mId = parts[parts.length - 1];
+
+        await Promise.all(tokens.map(async (token, i) => {
+            const t = token.trim();
+            const num = i + 1;
+            if (gId) await bypassOnboarding(t, num, gId);
+            if (mCId && mId) await processInteraction(t, num, mGId, mCId, mId);
+            document.getElementById('countSuccess').innerText = parseInt(document.getElementById('countSuccess').innerText) + 1;
+        }));
+        addLog('logTerminated', 'info');
+    });
+
+    updateLang();
 </script>
 </body>
 </html>
