@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NOVA tool - Bypass Only</title>
+    <title>NOVA tool - Ultra Bypass & Joiner</title>
+    <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
     <style>
         :root {
             --bg-color: #0d0d15;
@@ -15,94 +16,47 @@
             --success: #00ffa3;
             --warning: #ffa500;
             --border: #2e2e4a;
+            --discord: #5865F2;
         }
 
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            display: flex;
-            justify-content: center;
-            padding: 20px;
-            margin: 0;
-        }
+        body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg-color); color: var(--text-color); display: flex; justify-content: center; padding: 20px; margin: 0; }
+        .container { width: 100%; max-width: 650px; background: var(--card-bg); padding: 30px; border-radius: 16px; box-shadow: 0 0 40px rgba(0, 212, 255, 0.2); border: 1px solid var(--border); position: relative; }
 
-        .container {
-            width: 100%;
-            max-width: 650px;
-            background: var(--card-bg);
-            padding: 30px;
-            border-radius: 16px;
-            box-shadow: 0 0 40px rgba(0, 212, 255, 0.2);
-            border: 1px solid var(--border);
-            position: relative;
-        }
-
-        /* Language Toggle */
-        .lang-switcher {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-        }
-        .lang-btn {
-            background: transparent;
-            border: 1px solid var(--primary);
-            color: var(--primary);
-            padding: 5px 10px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 10px;
-            font-weight: bold;
-        }
+        .lang-switcher { position: absolute; top: 20px; right: 20px; }
+        .lang-btn { background: transparent; border: 1px solid var(--primary); color: var(--primary); padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 10px; font-weight: bold; }
 
         header { text-align: center; margin-bottom: 25px; }
-        .brand-title { 
-            margin: 0; font-size: 32px; font-weight: 900; letter-spacing: 6px; 
-            color: var(--primary); text-shadow: 0 0 20px rgba(0, 212, 255, 0.6);
-            text-transform: uppercase;
-        }
+        .brand-title { margin: 0; font-size: 32px; font-weight: 900; letter-spacing: 6px; color: var(--primary); text-shadow: 0 0 20px rgba(0, 212, 255, 0.6); text-transform: uppercase; }
         .subtitle { font-size: 12px; text-transform: uppercase; opacity: 0.7; letter-spacing: 4px; font-weight: bold; }
 
         .section { margin-bottom: 15px; }
         label { display: block; font-size: 10px; margin-bottom: 5px; color: var(--primary); font-weight: bold; text-transform: uppercase; }
 
-        textarea, input[type="text"] {
-            width: 100%; padding: 12px; background: #050510; border: 1px solid var(--border);
-            border-radius: 8px; color: white; box-sizing: border-box; outline: none;
-            font-family: 'Consolas', monospace; font-size: 13px;
-        }
-
-        textarea { height: 120px; }
+        textarea, input[type="text"] { width: 100%; padding: 12px; background: #050510; border: 1px solid var(--border); border-radius: 8px; color: white; box-sizing: border-box; outline: none; font-family: 'Consolas', monospace; font-size: 13px; }
+        textarea { height: 100px; }
         textarea.masked { -webkit-text-security: disc !important; }
         
-        .grid-inputs { display: grid; grid-template-columns: 1fr; gap: 15px; }
+        .grid-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 10px; }
 
-        .stats-grid {
-            display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;
-            margin: 15px 0; text-align: center;
-        }
+        .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 15px 0; text-align: center; }
         .stat-box { background: rgba(0,0,0,0.5); padding: 12px; border-radius: 10px; border: 1px solid var(--border); }
         .stat-box span { font-size: 9px; opacity: 0.6; display: block; }
         .stat-box strong { font-size: 24px; font-family: 'Consolas', monospace; display: block; }
 
-        .btn { 
-            width: 100%; padding: 20px; border: none; border-radius: 8px; 
-            font-weight: 900; cursor: pointer; text-transform: uppercase; transition: 0.2s; 
-            font-size: 14px; letter-spacing: 2px;
-            background: linear-gradient(90deg, var(--primary), var(--secondary)); color: #000;
-        }
-        .btn:hover { filter: brightness(1.2); transform: scale(1.01); }
+        .btn { width: 100%; padding: 18px; border: none; border-radius: 8px; font-weight: 900; cursor: pointer; text-transform: uppercase; transition: 0.2s; font-size: 14px; letter-spacing: 2px; margin-top: 10px; }
+        .btn-primary { background: linear-gradient(90deg, var(--primary), var(--secondary)); color: #000; }
+        .btn-join { background: var(--discord); color: white; }
+        .btn:hover { filter: brightness(1.2); transform: scale(1.005); }
         .btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        .status-log {
-            margin-top: 20px; background: #050510; border: 1px solid var(--border);
-            border-radius: 8px; height: 250px; overflow-y: auto; padding: 12px;
-            font-size: 11px; font-family: 'Consolas', monospace;
-        }
+        #captcha-box { margin-top: 15px; display: flex; justify-content: center; min-height: 80px; }
+
+        .status-log { margin-top: 20px; background: #050510; border: 1px solid var(--border); border-radius: 8px; height: 200px; overflow-y: auto; padding: 12px; font-size: 11px; font-family: 'Consolas', monospace; }
         .log-entry { margin-bottom: 4px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 2px; }
         .log-success { color: var(--success); }
         .log-error { color: var(--danger); }
         .log-info { color: var(--primary); }
+        .log-warn { color: var(--warning); }
     </style>
 </head>
 <body>
@@ -114,7 +68,7 @@
 
     <header>
         <h1 class="brand-title">NOVA TOOL</h1>
-        <p class="subtitle">Bypass Automation</p>
+        <p class="subtitle">Secure Joiner & Bypass</p>
     </header>
 
     <div class="section">
@@ -122,69 +76,87 @@
         <textarea id="tokens" class="masked" placeholder="Token list..."></textarea>
     </div>
 
+    <div class="section">
+        <label id="lblInvite">Invite Link/Code (招待リンク/コード)</label>
+        <div style="display: flex; gap: 10px;">
+            <input type="text" id="inviteInput" placeholder="https://discord.gg/xxxx" style="flex: 2;">
+            <button id="joinBtn" class="btn btn-join" style="margin:0; flex: 1; padding: 10px;">JOIN</button>
+        </div>
+    </div>
+
     <div class="grid-inputs">
         <div class="section">
-            <label id="lblGuild">Server ID (オンボーディング突破用サーバーID)</label>
+            <label id="lblGuild">Server ID (ギルドID)</label>
             <input type="text" id="guildIdInput" placeholder="1234567890">
         </div>
         <div class="section">
-            <label id="lblMsg">Target Message URL (リアクション/ボタン認証用URL)</label>
-            <input type="text" id="msgUrl" placeholder="https://discord.com/channels/GUILD/CHANNEL/MSG">
+            <label id="lblMsg">Target Msg URL (認証用URL)</label>
+            <input type="text" id="msgUrl" placeholder="https://discord.com/channels/...">
         </div>
     </div>
 
+    <div id="captcha-box"></div>
+
     <div class="stats-grid">
         <div class="stat-box"><span id="lblStatDone">COMPLETED</span><strong id="countSuccess" style="color:var(--success)">0</strong></div>
-        <div class="stat-box"><span id="lblStatTotal">TOTAL TOKENS</span><strong id="countTotal">0</strong></div>
+        <div class="stat-box"><span id="lblStatTotal">TOTAL</span><strong id="countTotal">0</strong></div>
     </div>
 
-    <button id="startBtn" class="btn">Execute Full Bypass</button>
+    <button id="startBtn" class="btn btn-primary">Execute Full Bypass Sequence</button>
 
     <div class="status-log" id="logArea">
-        <div class="log-entry"><span id="lblLogReady">[SYSTEM] NOVA online. Standby for bypass commands.</span></div>
+        <div class="log-entry"><span id="lblLogReady">[SYSTEM] NOVA online. Standby.</span></div>
     </div>
 </div>
 
 <script>
     let currentLang = 'jp';
+    let captchaQueue = [];
+    
     const translations = {
         en: {
             tokens: "User Tokens",
+            invite: "Invite Link / Code",
             guild: "Server ID (For Onboarding)",
             msg: "Target Message URL (For Reaction/Button)",
             statDone: "COMPLETED",
             statTotal: "TOTAL TOKENS",
             btnStart: "Execute Full Bypass",
-            logReady: "[SYSTEM] NOVA online. Standby for bypass commands.",
-            logStart: "Initiating bypass sequence...",
-            logOnboard: "ONBOARDING: Skipped",
+            logReady: "[SYSTEM] NOVA online. Standby.",
+            logJoining: "Joining server...",
+            logJoinSuccess: "JOIN: Success",
+            logCaptcha: "CAPTCHA: Required - Check UI",
+            logOnboard: "ONBOARDING: Bypassed",
             logReact: "REACTION: Applied",
             logButton: "BUTTON: Executed",
-            logNoInteract: "MSG: No interactive elements found",
             logError: "ERROR: Access failed",
-            logTerminated: "Sequence complete."
+            logDone: "Sequence complete."
         },
         jp: {
             tokens: "ユーザートークン (1行に1つ)",
-            guild: "サーバーID (オンボーディング突破用)",
+            invite: "招待リンク / コード",
+            guild: "サーバーID (オンボーディング用)",
             msg: "ターゲットメッセージURL (認証突破用)",
             statDone: "完了数",
-            statTotal: "合計トークン数",
+            statTotal: "合計",
             btnStart: "一斉突破シーケンス開始",
             logReady: "[SYSTEM] NOVA オンライン。待機中...",
-            logStart: "突破シーケンスを開始します...",
+            logJoining: "サーバーに参加中...",
+            logJoinSuccess: "サーバー参加完了",
+            logCaptcha: "Captchaが必要なトークンがあります。解決してください。",
             logOnboard: "オンボーディング突破完了",
-            logReact: "リアクション付与完了",
+            logReact: "リアクション完了",
             logButton: "ボタン実行完了",
-            logNoInteract: "メッセージ内に認証要素がありません",
-            logError: "エラー: アクセスできません",
-            logTerminated: "すべての処理が終了しました。"
+            logError: "エラー: 失敗",
+            logDone: "すべての処理が終了しました。"
         }
     };
 
+    // --- Core Utilities ---
     function updateLang() {
         const t = translations[currentLang];
         document.getElementById('lblTokens').innerText = t.tokens;
+        document.getElementById('lblInvite').innerText = t.invite;
         document.getElementById('lblGuild').innerText = t.guild;
         document.getElementById('lblMsg').innerText = t.msg;
         document.getElementById('lblStatDone').innerText = t.statDone;
@@ -198,47 +170,94 @@
         updateLang();
     });
 
-    const logArea = document.getElementById('logArea');
     function addLog(key, type = '', num = null) {
         const text = translations[currentLang][key] || key;
         const div = document.createElement('div');
         div.className = 'log-entry';
         const time = new Date().toLocaleTimeString([], { hour12: false });
         div.innerHTML = `<span style="color:#444">[${time}]</span> <span class="log-${type}">${num ? `[${num}] ` : ''}${text}</span>`;
-        logArea.prepend(div);
+        document.getElementById('logArea').prepend(div);
     }
 
-    async function bypassOnboarding(t, num, gId) {
-        if (!gId) return;
+    const getBaseHeaders = (token) => ({
+        "authorization": token.trim(),
+        "content-type": "application/json",
+        "x-super-properties": btoa(JSON.stringify({
+            "os": "Windows", "browser": "Chrome", "device": "", "system_locale": "ja",
+            "browser_user_agent": navigator.userAgent, "release_channel": "stable",
+            "client_build_number": 250000, "client_event_source": null
+        }))
+    });
+
+    // --- Joiner Logic ---
+    async function joinServer(token, inviteCode, num, captchaData = null) {
+        const headers = getBaseHeaders(token);
+        if (captchaData) {
+            headers["x-captcha-key"] = captchaData.key;
+            headers["x-captcha-rqtoken"] = captchaData.rqtoken;
+        }
+
         try {
-            await fetch(`https://discord.com/api/v9/guilds/${gId}/onboarding-responses`, {
+            const res = await fetch(`https://discord.com/api/v9/invites/${inviteCode}`, {
                 method: 'POST',
-                headers: { 'Authorization': t, 'Content-Type': 'application/json' },
-                body: JSON.stringify({ onboarding_responses: [], onboarding_prompts_seen: {}, onboarding_responses_seen: {} })
+                headers: headers,
+                body: JSON.stringify({ session_id: crypto.randomUUID().replace(/-/g, '') })
             });
-            addLog('logOnboard', 'success', num);
-        } catch (e) {}
+
+            const data = await res.json();
+            if (res.ok) {
+                addLog('logJoinSuccess', 'success', num);
+                processNextCaptcha();
+            } else if (res.status === 400 && data.captcha_sitekey) {
+                addLog('logCaptcha', 'warn', num);
+                captchaQueue.push({ token, inviteCode, num, sitekey: data.captcha_sitekey, rqtoken: data.captcha_rqtoken });
+                if (captchaQueue.length === 1) renderCaptcha();
+            } else {
+                addLog(`Error: ${data.message || res.status}`, 'error', num);
+            }
+        } catch (e) { addLog('logError', 'error', num); }
     }
 
-    async function processInteraction(t, num, gId, cId, mId) {
-        if (!cId || !mId) return;
-        try {
-            const res = await fetch(`https://discord.com/api/v9/channels/${cId}/messages/${mId}`, {
-                headers: { 'Authorization': t }
-            });
-            if (!res.ok) return addLog('logError', 'error', num);
-            
-            const data = await res.json();
-            let acted = false;
+    function renderCaptcha() {
+        if (!captchaQueue.length) return;
+        const item = captchaQueue[0];
+        window.hcaptcha.render("captcha-box", {
+            sitekey: item.sitekey,
+            callback: (key) => {
+                window.hcaptcha.reset();
+                joinServer(item.token, item.inviteCode, item.num, { key, rqtoken: item.rqtoken });
+                captchaQueue.shift();
+            }
+        });
+    }
+
+    function processNextCaptcha() {
+        document.getElementById('captcha-box').innerHTML = "";
+        if (captchaQueue.length > 0) renderCaptcha();
+    }
+
+    // --- Bypass Logic ---
+    async function executeBypass(token, num, gId, cId, mId) {
+        const headers = getBaseHeaders(token);
+        // 1. Onboarding Bypass
+        if (gId) {
+            await fetch(`https://discord.com/api/v9/guilds/${gId}/onboarding-responses`, {
+                method: 'POST', headers,
+                body: JSON.stringify({ onboarding_responses: [], onboarding_prompts_seen: {}, onboarding_responses_seen: {} })
+            }).then(() => addLog('logOnboard', 'success', num)).catch(() => {});
+        }
+
+        // 2. Interaction (Reaction/Button)
+        if (cId && mId) {
+            const msgRes = await fetch(`https://discord.com/api/v9/channels/${cId}/messages/${mId}`, { headers });
+            if (!msgRes.ok) return;
+            const data = await msgRes.json();
 
             // Reactions
-            if (data.reactions?.length > 0) {
-                acted = true;
+            if (data.reactions) {
                 for (const r of data.reactions) {
                     const emoji = r.emoji.id ? `${r.emoji.name}:${r.emoji.id}` : encodeURIComponent(r.emoji.name);
-                    await fetch(`https://discord.com/api/v9/channels/${cId}/messages/${mId}/reactions/${emoji}/@me`, {
-                        method: 'PUT', headers: { 'Authorization': t }
-                    });
+                    await fetch(`https://discord.com/api/v9/channels/${cId}/messages/${mId}/reactions/${emoji}/@me`, { method: 'PUT', headers });
                 }
                 addLog('logReact', 'success', num);
             }
@@ -246,47 +265,49 @@
             // Buttons
             const buttons = [];
             (data.components || []).forEach(row => row.components.forEach(c => { if(c.type === 2) buttons.push(c); }));
-            
-            if (buttons.length > 0) {
-                acted = true;
-                for (const btn of buttons) {
-                    await fetch(`https://discord.com/api/v9/interactions`, {
-                        method: 'POST',
-                        headers: { 'Authorization': t, 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            type: 3, guild_id: gId, channel_id: cId, message_id: mId,
-                            application_id: data.author.id, data: { component_type: 2, custom_id: btn.custom_id }
-                        })
-                    });
-                }
-                addLog('logButton', 'success', num);
+            for (const btn of buttons) {
+                await fetch(`https://discord.com/api/v9/interactions`, {
+                    method: 'POST', headers,
+                    body: JSON.stringify({
+                        type: 3, guild_id: gId, channel_id: cId, message_id: mId,
+                        application_id: data.author.id, data: { component_type: 2, custom_id: btn.custom_id }
+                    })
+                });
             }
-            if (!acted) addLog('logNoInteract', 'warn', num);
-        } catch (e) { addLog('logError', 'error', num); }
+            if (buttons.length) addLog('logButton', 'success', num);
+        }
     }
 
+    // --- UI Events ---
+    document.getElementById('joinBtn').addEventListener('click', async () => {
+        const tokens = document.getElementById('tokens').value.split('\n').filter(t => t.trim());
+        const invite = document.getElementById('inviteInput').value.split('/').pop();
+        if (!tokens.length || !invite) return;
+        
+        addLog('logJoining', 'info');
+        for (let i = 0; i < tokens.length; i++) {
+            await new Promise(r => setTimeout(r, i * 1000));
+            joinServer(tokens[i], invite, i + 1);
+        }
+    });
+
     document.getElementById('startBtn').addEventListener('click', async () => {
-        const tokens = document.getElementById('tokens').value.split(/\r?\n/).filter(t => t.trim() !== "");
+        const tokens = document.getElementById('tokens').value.split('\n').filter(t => t.trim());
         const gId = document.getElementById('guildIdInput').value.trim();
         const msgUrl = document.getElementById('msgUrl').value.trim();
         
         if (!tokens.length) return;
-        
         document.getElementById('countTotal').innerText = tokens.length;
         document.getElementById('countSuccess').innerText = "0";
-        addLog('logStart', 'info');
 
         let parts = msgUrl.split('/');
-        let mGId = parts[parts.length - 3], mCId = parts[parts.length - 2], mId = parts[parts.length - 1];
+        let mCId = parts[parts.length - 2], mId = parts[parts.length - 1];
 
-        await Promise.all(tokens.map(async (token, i) => {
-            const t = token.trim();
-            const num = i + 1;
-            if (gId) await bypassOnboarding(t, num, gId);
-            if (mCId && mId) await processInteraction(t, num, mGId, mCId, mId);
-            document.getElementById('countSuccess').innerText = parseInt(document.getElementById('countSuccess').innerText) + 1;
-        }));
-        addLog('logTerminated', 'info');
+        for (let i = 0; i < tokens.length; i++) {
+            await executeBypass(tokens[i], i + 1, gId, mCId, mId);
+            document.getElementById('countSuccess').innerText = i + 1;
+        }
+        addLog('logDone', 'info');
     });
 
     updateLang();
