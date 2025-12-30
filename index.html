@@ -112,6 +112,7 @@
 <script>
     let currentLang = 'jp';
     let captchaQueue = [];
+    let currentFingerprint = null;
     
     const translations = {
         en: {
@@ -130,6 +131,7 @@
             logReact: "REACTION: Applied",
             logButton: "BUTTON: Executed",
             logError: "ERROR: Access failed",
+            logFingerprint: "Fingerprint acquired.",
             logDone: "Sequence complete."
         },
         jp: {
@@ -148,11 +150,11 @@
             logReact: "リアクション完了",
             logButton: "ボタン実行完了",
             logError: "エラー: 失敗",
+            logFingerprint: "指紋認証データを取得しました。",
             logDone: "すべての処理が終了しました。"
         }
     };
 
-    // --- Core Utilities ---
     function updateLang() {
         const t = translations[currentLang];
         document.getElementById('lblTokens').innerText = t.tokens;
@@ -179,19 +181,49 @@
         document.getElementById('logArea').prepend(div);
     }
 
-    const getBaseHeaders = (token) => ({
-        "authorization": token.trim(),
-        "content-type": "application/json",
-        "x-super-properties": btoa(JSON.stringify({
+    // --- High Level Fingerprint & Super Properties Logic ---
+    function getSuperProperties() {
+        return btoa(JSON.stringify({
             "os": "Windows", "browser": "Chrome", "device": "", "system_locale": "ja",
             "browser_user_agent": navigator.userAgent, "release_channel": "stable",
             "client_build_number": 250000, "client_event_source": null
-        }))
-    });
+        }));
+    }
+
+    async function getFingerprintAndSetCookie() {
+        try {
+            const response = await fetch("https://discord-api.soyaaaaana.com/experiments", {
+                headers: {
+                    "x-context-properties": btoa(JSON.stringify({ location: "/channels/@me" })),
+                    "x-debug-options": "bugReporterEnabled",
+                    "x-discord-locale": new Intl.Locale(navigator.language).baseName,
+                    "x-discord-timezone": Intl.DateTimeFormat().resolvedOptions().timeZone,
+                    "x-super-properties": getSuperProperties(),
+                },
+                credentials: "include"
+            });
+            if (response.ok) {
+                const data = await response.json();
+                currentFingerprint = data.fingerprint;
+                addLog('logFingerprint', 'info');
+                return data.fingerprint;
+            }
+        } catch (e) { console.error("Fingerprint API error", e); }
+        return null;
+    }
 
     // --- Joiner Logic ---
     async function joinServer(token, inviteCode, num, captchaData = null) {
-        const headers = getBaseHeaders(token);
+        // 毎回フレッシュな指紋を取得（または初回のみ）
+        if (!currentFingerprint) await getFingerprintAndSetCookie();
+
+        const headers = {
+            "authorization": token.trim(),
+            "content-type": "application/json",
+            "x-fingerprint": currentFingerprint,
+            "x-super-properties": getSuperProperties()
+        };
+
         if (captchaData) {
             headers["x-captcha-key"] = captchaData.key;
             headers["x-captcha-rqtoken"] = captchaData.rqtoken;
@@ -214,6 +246,7 @@
                 if (captchaQueue.length === 1) renderCaptcha();
             } else {
                 addLog(`Error: ${data.message || res.status}`, 'error', num);
+                processNextCaptcha();
             }
         } catch (e) { addLog('logError', 'error', num); }
     }
@@ -238,8 +271,12 @@
 
     // --- Bypass Logic ---
     async function executeBypass(token, num, gId, cId, mId) {
-        const headers = getBaseHeaders(token);
-        // 1. Onboarding Bypass
+        const headers = {
+            "authorization": token.trim(),
+            "content-type": "application/json",
+            "x-super-properties": getSuperProperties()
+        };
+
         if (gId) {
             await fetch(`https://discord.com/api/v9/guilds/${gId}/onboarding-responses`, {
                 method: 'POST', headers,
@@ -247,13 +284,11 @@
             }).then(() => addLog('logOnboard', 'success', num)).catch(() => {});
         }
 
-        // 2. Interaction (Reaction/Button)
         if (cId && mId) {
             const msgRes = await fetch(`https://discord.com/api/v9/channels/${cId}/messages/${mId}`, { headers });
             if (!msgRes.ok) return;
             const data = await msgRes.json();
 
-            // Reactions
             if (data.reactions) {
                 for (const r of data.reactions) {
                     const emoji = r.emoji.id ? `${r.emoji.name}:${r.emoji.id}` : encodeURIComponent(r.emoji.name);
@@ -262,7 +297,6 @@
                 addLog('logReact', 'success', num);
             }
 
-            // Buttons
             const buttons = [];
             (data.components || []).forEach(row => row.components.forEach(c => { if(c.type === 2) buttons.push(c); }));
             for (const btn of buttons) {
@@ -278,16 +312,18 @@
         }
     }
 
-    // --- UI Events ---
     document.getElementById('joinBtn').addEventListener('click', async () => {
         const tokens = document.getElementById('tokens').value.split('\n').filter(t => t.trim());
         const invite = document.getElementById('inviteInput').value.split('/').pop();
         if (!tokens.length || !invite) return;
         
         addLog('logJoining', 'info');
+        // 参加前に一度指紋をセットアップ
+        await getFingerprintAndSetCookie();
+
         for (let i = 0; i < tokens.length; i++) {
-            await new Promise(r => setTimeout(r, i * 1000));
-            joinServer(tokens[i], invite, i + 1);
+            await joinServer(tokens[i], invite, i + 1);
+            await new Promise(r => setTimeout(r, 1000));
         }
     });
 
