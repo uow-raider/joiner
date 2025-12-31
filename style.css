@@ -16,13 +16,31 @@ header { text-align: center; margin-bottom: 20px; }
 .brand-title { margin: 0; font-size: 32px; font-weight: 900; letter-spacing: 4px; color: var(--primary); text-transform: uppercase; }
 .subtitle { font-size: 11px; opacity: 0.7; letter-spacing: 2px; color: var(--secondary); }
 
-.section, .profile-section { margin-bottom: 15px; }
+.section { margin-bottom: 15px; }
 .grid-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 5px; }
 
 label { display: block; font-size: 10px; margin-bottom: 5px; color: var(--primary); font-weight: bold; text-transform: uppercase; }
 textarea, input[type="text"] { width: 100%; padding: 12px; background: #050510; border: 1px solid var(--border); border-radius: 8px; color: white; box-sizing: border-box; outline: none; font-size: 13px; font-family: 'Consolas', monospace; }
-textarea { height: 80px; }
-textarea.masked { -webkit-text-security: disc; }
+textarea { height: 100px; resize: none; }
+
+/* トークン非表示制御 */
+.masked { -webkit-text-security: disc; }
+.unmasked { -webkit-text-security: none !important; }
+
+.toggle-btn {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: white;
+    padding: 4px 8px;
+    cursor: pointer;
+    font-size: 14px;
+    z-index: 10;
+}
+.toggle-btn:hover { background: var(--primary); color: black; }
 
 .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 15px 0; }
 .stat-box { background: rgba(0,0,0,0.5); padding: 10px; border-radius: 8px; border: 1px solid var(--border); text-align: center; }
@@ -30,7 +48,6 @@ textarea.masked { -webkit-text-security: disc; }
 
 .action-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 20px; }
 .btn { padding: 15px 5px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 12px; transition: 0.2s; color: white; }
-
 .btn-join { background: var(--discord); }
 .btn-bypass { background: var(--secondary); }
 .btn-profile { background: #333; border: 1px solid var(--primary); }
