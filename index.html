@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NOVA tool - Ultra Bypass & Joiner</title>
+    <title>NOVA tool - Ultra Multi-Function</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
 </head>
@@ -12,41 +12,53 @@
 <div class="container">
     <header>
         <h1 class="brand-title">NOVA TOOL</h1>
-        <p class="subtitle">Secure Joiner & Bypass Engine</p>
+        <p class="subtitle">Joiner / Bypasser / Profile Editor</p>
     </header>
 
     <div class="section">
         <label>User Tokens</label>
-        <textarea id="tokens" class="masked" placeholder="1行に1トークン入力してください"></textarea>
+        <textarea id="tokens" class="masked" placeholder="1行に1トークン"></textarea>
     </div>
 
     <div class="grid-inputs">
         <div class="section">
-            <label>Invite Link / Code</label>
+            <label>Invite Link</label>
             <input type="text" id="inviteInput" placeholder="https://discord.gg/xxxx">
         </div>
         <div class="section">
-            <label>Server ID (Auto-detect)</label>
-            <input type="text" id="guildIdInput" placeholder="招待リンクから自動取得">
+            <label>Server ID</label>
+            <input type="text" id="guildIdInput" placeholder="自動取得されます">
+        </div>
+    </div>
+
+    <div class="profile-section">
+        <label>Profile Settings (Optional)</label>
+        <div class="grid-inputs">
+            <input type="text" id="newName" placeholder="新しいユーザー名">
+            <input type="text" id="avatarUrl" placeholder="アバター画像URL">
         </div>
     </div>
 
     <div class="section">
         <label>Target Verification URL (Message URL)</label>
-        <input type="text" id="msgUrl" placeholder="https://discord.com/channels/guild_id/channel_id/message_id">
+        <input type="text" id="msgUrl" placeholder="https://discord.com/channels/...">
     </div>
 
     <div id="captcha-box"></div>
 
     <div class="stats-grid">
-        <div class="stat-box"><span>COMPLETED</span><strong id="countSuccess">0</strong></div>
+        <div class="stat-box"><span>SUCCESS</span><strong id="countSuccess">0</strong></div>
         <div class="stat-box"><span>TOTAL</span><strong id="countTotal">0</strong></div>
     </div>
 
-    <button id="joinBtn" class="btn btn-join">EXECUTE FULL BYPASS</button>
+    <div class="action-grid">
+        <button id="joinBtn" class="btn btn-join">1. JOIN SERVER</button>
+        <button id="bypassBtn" class="btn btn-bypass">2. START BYPASS</button>
+        <button id="profileBtn" class="btn btn-profile">3. UPDATE PROFILE</button>
+    </div>
 
     <div class="status-log" id="logArea">
-        <div class="log-entry"><span>[SYSTEM] NOVA online. Standby.</span></div>
+        <div class="log-entry"><span>[SYSTEM] NOVA multi-engine online.</span></div>
     </div>
 </div>
 
