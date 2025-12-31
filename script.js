@@ -1,159 +1,68 @@
-let captchaQueue = [];
-let currentFingerprint = null;
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NOVA tool - Ultra Multi-Function</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
+</head>
+<body>
 
-function addLog(msg, type = '', num = null) {
-    const div = document.createElement('div');
-    div.className = 'log-entry';
-    const time = new Date().toLocaleTimeString();
-    div.innerHTML = `<span style="color:#555">[${time}]</span> <span class="log-${type}">${num ? `[${num}] ` : ''}${msg}</span>`;
-    document.getElementById('logArea').prepend(div);
-}
+<div class="container">
+    <header>
+        <h1 class="brand-title">NOVA TOOL</h1>
+        <p class="subtitle">Joiner / Bypasser / Profile Editor</p>
+    </header>
 
-function getSuperProperties() {
-    return btoa(JSON.stringify({
-        "os": "Windows", "browser": "Chrome", "device": "", "system_locale": "ja",
-        "browser_user_agent": navigator.userAgent, "browser_version": "120.0.0.0",
-        "os_version": "10", "release_channel": "stable", "client_build_number": 250000
-    }));
-}
+    <div class="section" style="position: relative;">
+        <label>User Tokens</label>
+        <textarea id="tokens" class="masked" placeholder="1行に1トークン入力"></textarea>
+        <button id="toggleTokens" class="toggle-btn" title="表示/非表示">👁️</button>
+    </div>
 
-// 招待リンクからID取得
-document.getElementById('inviteInput').addEventListener('change', async (e) => {
-    const code = e.target.value.split('/').pop();
-    if (!code) return;
-    try {
-        const res = await fetch(`https://discord-api.soyaaaaana.com/invites/${code}`);
-        const data = await res.json();
-        if (data.guild) document.getElementById('guildIdInput').value = data.guild.id;
-    } catch (e) {}
-});
+    <div class="grid-inputs">
+        <div class="section">
+            <label>Invite Link</label>
+            <input type="text" id="inviteInput" placeholder="https://discord.gg/xxxx">
+        </div>
+        <div class="section">
+            <label>Server ID</label>
+            <input type="text" id="guildIdInput" placeholder="自動取得されます">
+        </div>
+    </div>
 
-// --- 機能1: Join (サーバー参加) ---
-async function joinServer(token, inviteCode, num, captchaData = null) {
-    if (!currentFingerprint) {
-        const res = await fetch("https://discord-api.soyaaaaana.com/experiments", { headers: { "x-super-properties": getSuperProperties() }, method: "GET" });
-        const data = await res.json();
-        currentFingerprint = data.fingerprint;
-    }
-    const sessionId = crypto.randomUUID().replace(/-/g, '');
-    const headers = { "authorization": token.trim(), "content-type": "application/json", "x-fingerprint": currentFingerprint, "x-super-properties": getSuperProperties() };
-    if (captchaData) { 
-        headers["x-captcha-key"] = captchaData.key; 
-        headers["x-captcha-rqtoken"] = captchaData.rqtoken; 
-        headers["x-captcha-session-id"] = sessionId;
-    }
-    try {
-        const res = await fetch(`https://discord-api.soyaaaaana.com/invites/${inviteCode}`, {
-            method: 'POST', headers, body: JSON.stringify({ session_id: sessionId }), credentials: "include"
-        });
-        const data = await res.json();
-        if (res.ok && data.code) {
-            addLog('JOIN: Success', 'success', num);
-            processNextCaptcha();
-        } else if (data.captcha_sitekey) {
-            addLog('CAPTCHA: Required', 'info', num);
-            captchaQueue.push({ token, inviteCode, num, sitekey: data.captcha_sitekey, rqtoken: data.captcha_rqtoken, rqdata: data.captcha_rqdata });
-            if (captchaQueue.length === 1) renderCaptcha();
-        }
-    } catch (e) { addLog('Join Failed', 'error', num); }
-}
+    <div class="profile-section">
+        <label>Profile Settings (Optional)</label>
+        <div class="grid-inputs">
+            <input type="text" id="newName" placeholder="新しいユーザー名">
+            <input type="text" id="avatarUrl" placeholder="アバター画像URL">
+        </div>
+    </div>
 
-// --- 機能2: Bypass (認証突破) ---
-async function startBypass(token, num) {
-    const gId = document.getElementById('guildIdInput').value;
-    const msgUrl = document.getElementById('msgUrl').value;
-    const headers = { "authorization": token.trim(), "content-type": "application/json", "x-super-properties": getSuperProperties() };
+    <div class="section">
+        <label>Target Verification URL (Message URL)</label>
+        <input type="text" id="msgUrl" placeholder="https://discord.com/channels/...">
+    </div>
 
-    if (gId) {
-        await fetch(`https://discord.com/api/v9/guilds/${gId}/onboarding-responses`, { method: 'POST', headers, body: JSON.stringify({ onboarding_responses: [], onboarding_prompts_seen: {}, onboarding_responses_seen: {}, onboarding_completed: true }) }).catch(()=>{});
-        await fetch(`https://discord.com/api/v9/guilds/${gId}/requests/@me`, { method: 'PUT', headers, body: JSON.stringify({ termsofservice: true }) }).catch(()=>{});
-    }
-    if (msgUrl) {
-        const parts = msgUrl.split('/');
-        const cId = parts[parts.length - 2], mId = parts[parts.length - 1];
-        const msgRes = await fetch(`https://discord.com/api/v9/channels/${cId}/messages/${mId}`, { headers });
-        const msgData = await msgRes.json();
-        if (msgData.reactions) {
-            for (const r of msgData.reactions) {
-                const emo = r.emoji.id ? `${r.emoji.name}:${r.emoji.id}` : r.emoji.name;
-                await fetch(`https://discord.com/api/v9/channels/${cId}/messages/${mId}/reactions/${encodeURIComponent(emo)}/@me`, { method: 'PUT', headers });
-            }
-        }
-        if (msgData.components) {
-            for (const row of msgData.components) {
-                for (const comp of row.components) {
-                    if (comp.type === 2) {
-                        await fetch(`https://discord.com/api/v9/interactions`, { method: 'POST', headers, body: JSON.stringify({ type: 3, guild_id: gId, channel_id: cId, message_id: mId, application_id: msgData.author.id, data: { component_type: 2, custom_id: comp.custom_id } }) });
-                    }
-                }
-            }
-        }
-    }
-    addLog('BYPASS: Executed', 'success', num);
-}
+    <div id="captcha-box"></div>
 
-// --- 機能3: Profile Update (プロフィール変更) ---
-async function updateProfile(token, num) {
-    const name = document.getElementById('newName').value;
-    const avatarUrl = document.getElementById('avatarUrl').value;
-    const headers = { "authorization": token.trim(), "content-type": "application/json" };
-    let payload = {};
-    if (name) payload.username = name;
-    if (avatarUrl) {
-        try {
-            const imgRes = await fetch(avatarUrl);
-            const blob = await imgRes.blob();
-            const base64 = await new Promise(r => { const reader = new FileReader(); reader.onload = () => r(reader.result); reader.readAsDataURL(blob); });
-            payload.avatar = base64;
-        } catch (e) { addLog('Avatar fetch failed', 'error', num); }
-    }
-    if (Object.keys(payload).length > 0) {
-        const res = await fetch(`https://discord.com/api/v9/users/@me`, { method: 'PATCH', headers, body: JSON.stringify(payload) });
-        if (res.ok) addLog('PROFILE: Updated', 'success', num);
-        else addLog('PROFILE: Rate limited', 'error', num);
-    }
-}
+    <div class="stats-grid">
+        <div class="stat-box"><span>SUCCESS</span><strong id="countSuccess">0</strong></div>
+        <div class="stat-box"><span>TOTAL</span><strong id="countTotal">0</strong></div>
+    </div>
 
-// キャプチャ制御
-function renderCaptcha() {
-    if (!captchaQueue.length) return;
-    const item = captchaQueue[0];
-    const widgetId = window.hcaptcha.render("captcha-box", {
-        sitekey: item.sitekey,
-        callback: (key) => {
-            window.hcaptcha.reset();
-            joinServer(item.token, item.inviteCode, item.num, { key, rqtoken: item.rqtoken });
-            captchaQueue.shift();
-        }
-    });
-    if (item.rqdata) window.hcaptcha.setData(widgetId, { rqdata: item.rqdata });
-}
-function processNextCaptcha() { document.getElementById('captcha-box').innerHTML = ""; if (captchaQueue.length > 0) renderCaptcha(); }
+    <div class="action-grid">
+        <button id="joinBtn" class="btn btn-join">1. JOIN SERVER</button>
+        <button id="bypassBtn" class="btn btn-bypass">2. START BYPASS</button>
+        <button id="profileBtn" class="btn btn-profile">3. UPDATE PROFILE</button>
+    </div>
 
-// イベントリスナー
-document.getElementById('joinBtn').addEventListener('click', async () => {
-    const tokens = document.getElementById('tokens').value.split('\n').filter(t => t.trim());
-    const invite = document.getElementById('inviteInput').value.split('/').pop();
-    if (!tokens.length || !invite) return;
-    document.getElementById('countTotal').innerText = tokens.length;
-    for (let i = 0; i < tokens.length; i++) {
-        await joinServer(tokens[i], invite, i + 1);
-        await new Promise(r => setTimeout(r, 1500));
-    }
-});
+    <div class="status-log" id="logArea">
+        <div class="log-entry"><span>[SYSTEM] NOVA multi-engine online.</span></div>
+    </div>
+</div>
 
-document.getElementById('bypassBtn').addEventListener('click', async () => {
-    const tokens = document.getElementById('tokens').value.split('\n').filter(t => t.trim());
-    for (let i = 0; i < tokens.length; i++) {
-        await startBypass(tokens[i], i + 1);
-        await new Promise(r => setTimeout(r, 800));
-    }
-});
-
-document.getElementById('profileBtn').addEventListener('click', async () => {
-    const tokens = document.getElementById('tokens').value.split('\n').filter(t => t.trim());
-    for (let i = 0; i < tokens.length; i++) {
-        await updateProfile(tokens[i], i + 1);
-        await new Promise(r => setTimeout(r, 2000));
-    }
-});
+<script src="script.js"></script>
+</body>
+</html>
