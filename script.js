@@ -22,7 +22,10 @@ document.getElementById('inviteInput').addEventListener('change', async (e) => {
     const code = e.target.value.split('/').pop();
     if (!code) return;
     try {
-        const res = await fetch(`https://discord-api.soyaaaaana.com/invite/${code}`);
+        // Cookie取得のため credentials: "include" を追加
+        const res = await fetch(`https://discord-api.soyaaaaana.com/invite/${code}`, {
+            credentials: "include"
+        });
         const data = await res.json();
         if (data.guild) {
             document.getElementById('guildIdInput').value = data.guild.id;
@@ -47,10 +50,21 @@ document.getElementById('toggleTokens').addEventListener('click', function() {
 // --- Join Engine ---
 async function joinServer(token, inviteCode, num, captchaData = null) {
     if (!currentFingerprint) {
-        const res = await fetch("https://discord-api.soyaaaaana.com/experiments", { headers: { "x-super-properties": getSuperProperties() }, method: "GET" });
-        const data = await res.json();
-        currentFingerprint = data.fingerprint;
+        try {
+            // ★修正点: credentials: "include" を追加してCookieを取得できるように変更
+            const res = await fetch("https://discord-api.soyaaaaana.com/experiments", { 
+                headers: { "x-super-properties": getSuperProperties() }, 
+                method: "GET",
+                credentials: "include" 
+            });
+            const data = await res.json();
+            currentFingerprint = data.fingerprint;
+        } catch (e) {
+            addLog('Failed to fetch fingerprint', 'error', num);
+            return;
+        }
     }
+
     const sessionId = crypto.randomUUID().replace(/-/g, '');
     const headers = { 
         "authorization": token.trim(), 
@@ -59,13 +73,20 @@ async function joinServer(token, inviteCode, num, captchaData = null) {
         "x-super-properties": getSuperProperties(),
         "x-captcha-session-id": sessionId 
     };
+
     if (captchaData) { 
         headers["x-captcha-key"] = captchaData.key; 
         headers["x-captcha-rqtoken"] = captchaData.rqtoken; 
     }
+
     try {
         const proxyUrl = `https://discord-api.soyaaaaana.com/invite/${inviteCode}`;
-        const res = await fetch(proxyUrl, { method: 'POST', headers, body: JSON.stringify({ session_id: sessionId }), credentials: "include" });
+        const res = await fetch(proxyUrl, { 
+            method: 'POST', 
+            headers, 
+            body: JSON.stringify({ session_id: sessionId }), 
+            credentials: "include" 
+        });
         const data = await res.json();
 
         if (res.ok && data.code) {
@@ -147,7 +168,6 @@ async function updateProfile(token, num) {
     const headers = { "authorization": token.trim(), "content-type": "application/json" };
     let payload = {};
     
-    // 表示名 (Display Name) を変更する場合は global_name フィールドを使用
     if (displayName) payload.global_name = displayName;
     
     if (avatarUrl) {
